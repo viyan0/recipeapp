@@ -10,9 +10,12 @@ class RecipeService {
     required List<String> ingredients,
     required int maxTimeMinutes,
   }) async {
+    http.Response? response;
     try {
       final url = '$baseUrl/api/recipes/search';
-      final response = await http.post(
+      print('Making request to: $url');
+      
+      response = await http.post(
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
@@ -22,22 +25,54 @@ class RecipeService {
           'ingredients': ingredients,
           'maxTimeMinutes': maxTimeMinutes,
         }),
-      );
+      ).timeout(Duration(seconds: 30), onTimeout: () {
+        throw Exception('Request timeout - please check your internet connection');
+      });
 
+      print('Response status: ${response.statusCode}');
+      
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
+        
         if (responseData['status'] == 'success' && responseData['data'] != null) {
-          return List<Map<String, dynamic>>.from(responseData['data']);
+          // Extract the recipes array from the nested data structure
+          final data = responseData['data'];
+          if (data['recipes'] != null) {
+            print('Found ${data['recipes'].length} recipes');
+            return List<Map<String, dynamic>>.from(data['recipes']);
+          } else {
+            // Fallback for direct array response
+            return List<Map<String, dynamic>>.from(data);
+          }
         } else {
           throw Exception(responseData['message'] ?? 'Failed to search recipes');
         }
       } else {
-        final errorData = jsonDecode(response.body);
-        throw Exception(errorData['message'] ?? 'Failed to search recipes');
+        try {
+          final errorData = jsonDecode(response.body);
+          throw Exception(errorData['message'] ?? 'Server error (${response.statusCode})');
+        } catch (e) {
+          throw Exception('Server error (${response.statusCode}): Please try again');
+        }
       }
     } catch (e) {
       print('Recipe search error: $e');
-      throw Exception('Failed to search recipes: $e');
+      
+      // Handle specific error types for better user feedback
+      if (e.toString().contains('timeout')) {
+        rethrow; // Already has a good timeout message
+      } else if (e.toString().contains('SocketException') || 
+                 e.toString().contains('Failed host lookup') ||
+                 e.toString().contains('Network is unreachable')) {
+        throw Exception('Unable to connect to server. Please check your internet connection.');
+      } else if (e.toString().contains('Connection refused')) {
+        throw Exception('Server is not available. Please try again later.');
+      } else if (e.toString().contains('FormatException')) {
+        throw Exception('Invalid response from server. Please try again.');
+      } else {
+        // For any other errors, provide a generic message
+        throw Exception('Failed to search recipes. Please try again.');
+      }
     }
   }
 

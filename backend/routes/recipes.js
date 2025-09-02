@@ -39,11 +39,12 @@ router.post('/search', [
     const { ingredients, maxTimeMinutes, isVegetarian } = req.body;
 
     // For now, we'll use TheMealDB API to search for recipes
-    // In the future, you can implement your own recipe database
-    let searchQuery = ingredients.join(' ');
+    // TheMealDB search works better with single ingredients, so we'll search for the first ingredient
+    // and then filter results to match other ingredients
+    const primaryIngredient = ingredients[0]; // Use the first ingredient as primary search term
     
     // Make request to TheMealDB API
-    const apiUrl = `https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(searchQuery)}`;
+    const apiUrl = `https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(primaryIngredient)}`;
     
     const response = await axios.get(apiUrl, {
       timeout: 10000,
@@ -58,6 +59,8 @@ router.post('/search', [
     }
 
     const data = response.data;
+    
+    console.log(`TheMealDB search for "${primaryIngredient}" returned:`, data.meals ? data.meals.length : 0, 'meals');
     
     if (!data.meals || data.meals.length === 0) {
       return res.json({
@@ -127,6 +130,8 @@ router.post('/search', [
 
     // Limit results to top 20
     recipes = recipes.slice(0, 20);
+
+    console.log(`After filtering and processing: ${recipes.length} recipes`);
 
     res.json({
       status: 'success',
