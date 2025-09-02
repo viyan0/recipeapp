@@ -15,15 +15,19 @@ const parseDatabaseUrl = (url) => {
         rejectUnauthorized: false,
         require: true
       },
+      // Optimized for Neon serverless
       connectionTimeoutMillis: 10000,
-      idleTimeoutMillis: 30000,
-      max: 20,
-      min: 2,
+      idleTimeoutMillis: 10000, // Shorter idle timeout to prevent Neon drops
+      max: 5, // Fewer max connections for serverless
+      min: 0, // No minimum connections to allow complete shutdown
       acquireTimeoutMillis: 30000,
       createTimeoutMillis: 30000,
       destroyTimeoutMillis: 5000,
       reapIntervalMillis: 1000,
-      createRetryIntervalMillis: 200
+      createRetryIntervalMillis: 200,
+      // Additional Neon optimizations
+      allowExitOnIdle: true, // Allow pool to fully close when idle
+      keepAlive: false, // Don't try to keep connections alive
     };
   } catch (error) {
     console.error('Error parsing DATABASE_URL:', error);
@@ -34,31 +38,101 @@ const parseDatabaseUrl = (url) => {
 // Create connection pool
 const pool = new Pool(parseDatabaseUrl(process.env.DATABASE_URL));
 
-// Pool error handling
+// Pool error handling - Don't crash the server on connection drops
 pool.on('error', (err, client) => {
-  console.error('Unexpected error on idle client', err);
-  process.exit(-1);
+  console.error('⚠️  Database connection error (connection will be recreated):', err.message);
+  // Don't exit the process - let the pool handle reconnection
+  // The pool will automatically create new connections as needed
 });
 
 // Pool connect event
 pool.on('connect', (client) => {
-  console.log('New client connected to database');
+  console.log('✅ New client connected to database');
+  
+  // Set up client-level error handling to prevent crashes
+  client.on('error', (err) => {
+    console.error('⚠️  Client connection error:', err.message);
+  });
 });
 
-// Test database connection
+// Pool remove event (when connections are closed)
+pool.on('remove', (client) => {
+  console.log('🔄 Database client connection removed');
+});
+
+// Connection monitoring
+let connectionStats = {
+  totalConnections: 0,
+  activeConnections: 0,
+  idleConnections: 0,
+  waitingClients: 0,
+  lastConnectionTime: null,
+  connectionErrors: 0,
+  lastError: null
+};
+
+// Update stats on connect
+pool.on('connect', () => {
+  connectionStats.totalConnections++;
+  connectionStats.lastConnectionTime = new Date();
+});
+
+// Update stats on error
+pool.on('error', (err) => {
+  connectionStats.connectionErrors++;
+  connectionStats.lastError = {
+    message: err.message,
+    timestamp: new Date()
+  };
+});
+
+// Get current pool status
+const getPoolStatus = () => {
+  return {
+    totalCount: pool.totalCount,
+    idleCount: pool.idleCount,
+    waitingCount: pool.waitingCount,
+    connectionStats: connectionStats
+  };
+};
+
+// Retry mechanism for database operations
+const withRetry = async (operation, maxRetries = 3, delay = 1000) => {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      console.error(`⚠️  Database operation failed (attempt ${attempt}/${maxRetries}):`, error.message);
+      
+      if (attempt === maxRetries) {
+        throw error;
+      }
+      
+      // Wait before retrying
+      await new Promise(resolve => setTimeout(resolve, delay * attempt));
+    }
+  }
+};
+
+// Test database connection with retry
 const testConnection = async () => {
   try {
-    const client = await pool.connect();
-    console.log('✅ Database connected successfully');
+    const result = await withRetry(async () => {
+      const client = await pool.connect();
+      try {
+        // Test a simple query
+        const result = await client.query('SELECT NOW() as current_time');
+        console.log('✅ Database connected successfully');
+        console.log(`📅 Database time: ${result.rows[0].current_time}`);
+        return result;
+      } finally {
+        client.release();
+      }
+    });
     
-    // Test a simple query
-    const result = await client.query('SELECT NOW() as current_time');
-    console.log(`📅 Database time: ${result.rows[0].current_time}`);
-    
-    client.release();
     return true;
   } catch (error) {
-    console.error('❌ Database connection failed:', error.message);
+    console.error('❌ Database connection failed after retries:', error.message);
     return false;
   }
 };
@@ -147,33 +221,41 @@ const initTables = async () => {
   }
 };
 
-// Get database statistics
+// Get database statistics with retry
 const getDatabaseStats = async () => {
   try {
-    const client = await pool.connect();
-    
-    const stats = await client.query(`
-      SELECT 
-        (SELECT COUNT(*) FROM users) as user_count,
-        (SELECT COUNT(*) FROM recipes) as recipe_count,
-        (SELECT COUNT(*) FROM search_history) as search_count,
-        (SELECT COUNT(*) FROM favourites) as favourite_count
-    `);
-    
-    client.release();
-    return stats.rows[0];
+    return await withRetry(async () => {
+      const client = await pool.connect();
+      try {
+        const stats = await client.query(`
+          SELECT 
+            (SELECT COUNT(*) FROM users) as user_count,
+            (SELECT COUNT(*) FROM recipes) as recipe_count,
+            (SELECT COUNT(*) FROM search_history) as search_count,
+            (SELECT COUNT(*) FROM favourites) as favourite_count
+        `);
+        return stats.rows[0];
+      } finally {
+        client.release();
+      }
+    });
   } catch (error) {
-    console.error('Error getting database stats:', error);
+    console.error('❌ Error getting database stats after retries:', error.message);
     return null;
   }
 };
 
-// Health check for database
+// Health check for database with retry
 const healthCheck = async () => {
   try {
-    const client = await pool.connect();
-    await client.query('SELECT 1');
-    client.release();
+    await withRetry(async () => {
+      const client = await pool.connect();
+      try {
+        await client.query('SELECT 1');
+      } finally {
+        client.release();
+      }
+    });
     return { status: 'healthy', timestamp: new Date().toISOString() };
   } catch (error) {
     return { 
@@ -217,5 +299,7 @@ module.exports = {
   closeDB,
   testConnection,
   healthCheck,
-  getDatabaseStats
+  getDatabaseStats,
+  withRetry,
+  getPoolStatus
 };

@@ -5,7 +5,7 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config({ path: __dirname + '/config.env' });
 
-const { connectDB, closeDB } = require('./config/database');
+const { connectDB, closeDB, healthCheck, getPoolStatus } = require('./config/database');
 const errorHandler = require('./middleware/errorHandler');
 
 // Import routes
@@ -85,16 +85,33 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'success', 
-    message: 'Server is running',
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV,
-    uptime: process.uptime(),
-    memory: process.memoryUsage()
-  });
+// Health check endpoint with database monitoring
+app.get('/health', async (req, res) => {
+  try {
+    const dbHealth = await healthCheck();
+    const poolStatus = getPoolStatus();
+    
+    const healthData = {
+      status: dbHealth.status === 'healthy' ? 'success' : 'warning',
+      message: dbHealth.status === 'healthy' ? 'Server and database are running' : 'Server running, database issues detected',
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV,
+      uptime: process.uptime(),
+      memory: process.memoryUsage(),
+      database: dbHealth,
+      connectionPool: poolStatus
+    };
+    
+    const statusCode = dbHealth.status === 'healthy' ? 200 : 503;
+    res.status(statusCode).json(healthData);
+  } catch (error) {
+    res.status(503).json({
+      status: 'error',
+      message: 'Health check failed',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
 // API routes

@@ -1,0 +1,29 @@
+{
+  "name": "recipeapp",
+  "version": "1.0.0",
+  "description": "Recipe App - Full Stack Application with Node.js Backend and Flutter Frontend",
+  "main": "index.js",
+  "scripts": {
+    "install-all": "npm run install-backend && npm run install-frontend",
+    "install-backend": "cd backend && npm install",
+    "install-frontend": "cd frontend/recipe_app && flutter pub get",
+    "start": "npm run start-backend",
+    "start-backend": "cd backend && npm start",
+    "start-frontend": "cd frontend/recipe_app && flutter run -d web-server --web-port=8080",
+    "dev": "npm run start-backend",
+    "test-backend": "cd backend && npm test",
+    "test-connection": "cd backend && node test-connection-resilience.js"
+  },
+  "keywords": [
+    "recipe",
+    "app",
+    "nodejs",
+    "flutter",
+    "postgresql",
+    "neon"
+  ],
+  "author": "Recipe App Developer",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}
