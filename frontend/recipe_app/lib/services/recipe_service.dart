@@ -9,6 +9,8 @@ class RecipeService {
   static Future<List<Map<String, dynamic>>> searchRecipes({
     required List<String> ingredients,
     required int maxTimeMinutes,
+    List<String>? preferences,
+    List<String>? requiredIngredients,
   }) async {
     http.Response? response;
     try {
@@ -24,6 +26,8 @@ class RecipeService {
         body: jsonEncode({
           'ingredients': ingredients,
           'maxTimeMinutes': maxTimeMinutes,
+          'preferences': preferences ?? [],
+          'requiredIngredients': requiredIngredients ?? [],
         }),
       ).timeout(Duration(seconds: 30), onTimeout: () {
         throw Exception('Request timeout - please check your internet connection');

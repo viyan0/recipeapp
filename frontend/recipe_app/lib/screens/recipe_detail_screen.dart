@@ -182,8 +182,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                       
                       SizedBox(height: 24),
                       
-                      // Additional Info
-                      if (recipe['strYoutube'] != null || recipe['youtube'] != null)
+                      // Additional Info - Video Tutorial (only if video exists)
+                      if ((recipe['strYoutube'] != null && recipe['strYoutube'].toString().isNotEmpty) || 
+                          (recipe['youtube'] != null && recipe['youtube'].toString().isNotEmpty))
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

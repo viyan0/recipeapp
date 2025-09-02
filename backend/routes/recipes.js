@@ -23,7 +23,15 @@ router.post('/search', [
   body('isVegetarian')
     .optional()
     .isBoolean()
-    .withMessage('isVegetarian must be a boolean value')
+    .withMessage('isVegetarian must be a boolean value'),
+  body('preferences')
+    .optional()
+    .isArray()
+    .withMessage('Preferences must be an array'),
+  body('requiredIngredients')
+    .optional()
+    .isArray()
+    .withMessage('Required ingredients must be an array')
 ], async (req, res) => {
   try {
     // Check for validation errors
@@ -36,7 +44,7 @@ router.post('/search', [
       });
     }
 
-    const { ingredients, maxTimeMinutes, isVegetarian } = req.body;
+    const { ingredients, maxTimeMinutes, isVegetarian, preferences = [], requiredIngredients = [] } = req.body;
 
     // Improved search strategy: try multiple ingredients to get better results
     let allMeals = [];
@@ -107,15 +115,27 @@ router.post('/search', [
       // Estimate cooking time (TheMealDB doesn't provide this, so we'll estimate)
       const estimatedTime = Math.min(45, Math.max(15, recipeIngredients.length * 3));
 
-      // Calculate how many of the user's ingredients this recipe contains
-      const matchingIngredients = ingredients.filter(userIng => 
+      // Calculate preference and required ingredient matches
+      const matchingPreferences = preferences.filter(userIng => 
         recipeIngredients.some(recipeIng => 
           recipeIng.includes(userIng.toLowerCase()) || userIng.toLowerCase().includes(recipeIng)
         )
       );
       
-      const matchScore = matchingIngredients.length;
-      const matchPercentage = Math.round((matchScore / ingredients.length) * 100);
+      const matchingRequired = requiredIngredients.filter(userIng => 
+        recipeIngredients.some(recipeIng => 
+          recipeIng.includes(userIng.toLowerCase()) || userIng.toLowerCase().includes(recipeIng)
+        )
+      );
+      
+      // Combined scoring: required ingredients get double weight
+      const preferenceScore = matchingPreferences.length;
+      const requiredScore = matchingRequired.length * 2;
+      const totalScore = preferenceScore + requiredScore;
+      
+      // Calculate match percentage based on all ingredients
+      const totalIngredients = preferences.length + requiredIngredients.length;
+      const matchPercentage = totalIngredients > 0 ? Math.round(((matchingPreferences.length + matchingRequired.length) / totalIngredients) * 100) : 0;
 
       return {
         id: meal.idMeal,
@@ -128,16 +148,25 @@ router.post('/search', [
         isVegetarian: !recipeIngredients.some(ing => 
           ['chicken', 'beef', 'pork', 'lamb', 'fish', 'shrimp', 'bacon', 'ham'].includes(ing)
         ),
-        matchScore: matchScore,
+        matchScore: matchingPreferences.length + matchingRequired.length,
         matchPercentage: matchPercentage,
-        matchingIngredients: matchingIngredients
+        totalScore: totalScore,
+        preferenceMatches: matchingPreferences.length,
+        requiredMatches: matchingRequired.length,
+        matchingIngredients: [...matchingPreferences, ...matchingRequired]
       };
     });
 
-    // Filter recipes to only include those that match at least one ingredient
-    recipes = recipes.filter(recipe => recipe.matchScore > 0);
-    
-    console.log(`Recipes with ingredient matches: ${recipes.length}`);
+    // Filter logic: if there are required ingredients, prioritize recipes that have them
+    if (requiredIngredients.length > 0) {
+      // First, filter to recipes that have at least some required ingredients OR preferences
+      recipes = recipes.filter(recipe => recipe.matchScore > 0);
+      console.log(`Recipes with any ingredient matches: ${recipes.length}`);
+    } else {
+      // If no required ingredients, just need at least one preference match
+      recipes = recipes.filter(recipe => recipe.preferenceMatches > 0);
+      console.log(`Recipes with preference matches: ${recipes.length}`);
+    }
 
     // Apply dietary filters
     if (isVegetarian !== undefined) {
@@ -147,19 +176,24 @@ router.post('/search', [
     // Filter by time (keep recipes that can be made within the time limit)
     recipes = recipes.filter(recipe => recipe.cookingTime <= maxTimeMinutes);
 
-    // Sort by relevance: prioritize recipes with more ingredient matches
+    // Sort by relevance: prioritize recipes with required ingredients, then preferences
     recipes.sort((a, b) => {
-      // Primary sort: more matching ingredients first
-      if (a.matchScore !== b.matchScore) {
-        return b.matchScore - a.matchScore;
+      // Primary sort: recipes with more required ingredient matches first
+      if (a.requiredMatches !== b.requiredMatches) {
+        return b.requiredMatches - a.requiredMatches;
       }
       
-      // Secondary sort: higher match percentage first
+      // Secondary sort: total score (includes weighted required ingredients)
+      if (a.totalScore !== b.totalScore) {
+        return b.totalScore - a.totalScore;
+      }
+      
+      // Tertiary sort: higher match percentage first
       if (a.matchPercentage !== b.matchPercentage) {
         return b.matchPercentage - a.matchPercentage;
       }
       
-      // Tertiary sort: faster recipes first
+      // Quaternary sort: faster recipes first
       return a.cookingTime - b.cookingTime;
     });
 

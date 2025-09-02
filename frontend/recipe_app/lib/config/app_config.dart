@@ -45,7 +45,7 @@ class AppConfig {
 
   // UI settings
   static const int defaultSearchTimeMinutes = 30;
-  static const List<int> availableTimeOptions = [10, 20, 30, 60];
+  static const List<int> availableTimeOptions = [30, 60, 120];
 
   // Validation settings
   static const int minUsernameLength = 3;
