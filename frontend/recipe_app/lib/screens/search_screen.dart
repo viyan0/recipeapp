@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/recipe_service.dart';
 import '../services/auth_service.dart';
+import 'recipe_detail_screen.dart';
 import '../models/user.dart';
 import '../config/app_config.dart';
 
@@ -349,7 +350,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 color: Colors.orange[100],
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: recipe['image'] != null && recipe['image'].isNotEmpty
+                              child: recipe['image'] != null && recipe['image'].toString().isNotEmpty
                                 ? ClipRRect(
                                     borderRadius: BorderRadius.circular(8),
                                     child: Image.network(
@@ -379,14 +380,45 @@ class _SearchScreenState extends State<SearchScreen> {
                               children: [
                                 if (recipe['cookingTime'] != null)
                                   Text('Cooking time: ${recipe['cookingTime']} minutes'),
+                                if (recipe['matchScore'] != null && recipe['matchPercentage'] != null)
+                                  Container(
+                                    margin: EdgeInsets.only(top: 4),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.check_circle,
+                                          size: 16,
+                                          color: recipe['matchPercentage'] >= 80 
+                                              ? Colors.green 
+                                              : recipe['matchPercentage'] >= 50 
+                                                  ? Colors.orange 
+                                                  : Colors.grey,
+                                        ),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          '${recipe['matchScore']}/${_selectedIngredients.length} ingredients (${recipe['matchPercentage']}%)',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey[600],
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 if (recipe['ingredients'] != null)
-                                  Text('Ingredients: ${(recipe['ingredients'] as List).take(3).join(', ')}...'),
+                                  Text('Recipe ingredients: ${(recipe['ingredients'] as List).take(3).join(', ')}...'),
                               ],
                             ),
                             trailing: Icon(Icons.arrow_forward_ios, size: 16),
                             onTap: () {
                               // Navigate to recipe details
-                              // You can implement this later
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => RecipeDetailScreen(recipe: recipe),
+                                ),
+                              );
                             },
                           ),
                         );

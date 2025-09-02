@@ -38,31 +38,51 @@ router.post('/search', [
 
     const { ingredients, maxTimeMinutes, isVegetarian } = req.body;
 
-    // For now, we'll use TheMealDB API to search for recipes
-    // TheMealDB search works better with single ingredients, so we'll search for the first ingredient
-    // and then filter results to match other ingredients
-    const primaryIngredient = ingredients[0]; // Use the first ingredient as primary search term
+    // Improved search strategy: try multiple ingredients to get better results
+    let allMeals = [];
+    let searchedIngredients = [];
     
-    // Make request to TheMealDB API
-    const apiUrl = `https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(primaryIngredient)}`;
+    // Try searching with up to 3 ingredients to get more comprehensive results
+    const searchLimit = Math.min(3, ingredients.length);
     
-    const response = await axios.get(apiUrl, {
-      timeout: 10000,
-      headers: {
-        'Accept': 'application/json',
-        'User-Agent': 'RecipeApp/1.0'
+    for (let i = 0; i < searchLimit; i++) {
+      const ingredient = ingredients[i];
+      searchedIngredients.push(ingredient);
+      
+      console.log(`Searching TheMealDB for: "${ingredient}"`);
+      
+      const apiUrl = `https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(ingredient)}`;
+      
+      try {
+        const response = await axios.get(apiUrl, {
+          timeout: 10000,
+          headers: {
+            'Accept': 'application/json',
+            'User-Agent': 'RecipeApp/1.0'
+          }
+        });
+
+        if (response.status === 200 && response.data.meals) {
+          console.log(`Found ${response.data.meals.length} meals for "${ingredient}"`);
+          allMeals.push(...response.data.meals);
+        }
+      } catch (searchError) {
+        console.log(`Search failed for "${ingredient}":`, searchError.message);
+        // Continue with other ingredients even if one fails
       }
-    });
-
-    if (response.status !== 200) {
-      throw new Error(`TheMealDB API returned status ${response.status}`);
     }
-
-    const data = response.data;
     
-    console.log(`TheMealDB search for "${primaryIngredient}" returned:`, data.meals ? data.meals.length : 0, 'meals');
+    // Remove duplicates based on meal ID
+    const uniqueMeals = allMeals.reduce((unique, meal) => {
+      if (!unique.find(m => m.idMeal === meal.idMeal)) {
+        unique.push(meal);
+      }
+      return unique;
+    }, []);
     
-    if (!data.meals || data.meals.length === 0) {
+    console.log(`Total unique meals found: ${uniqueMeals.length}`);
+    
+    if (uniqueMeals.length === 0) {
       return res.json({
         status: 'success',
         message: 'No recipes found',
@@ -74,7 +94,7 @@ router.post('/search', [
     }
 
     // Process and filter recipes based on constraints
-    let recipes = data.meals.map(meal => {
+    let recipes = uniqueMeals.map(meal => {
       // Extract ingredients
       const recipeIngredients = [];
       for (let i = 1; i <= 20; i++) {
@@ -87,6 +107,16 @@ router.post('/search', [
       // Estimate cooking time (TheMealDB doesn't provide this, so we'll estimate)
       const estimatedTime = Math.min(45, Math.max(15, recipeIngredients.length * 3));
 
+      // Calculate how many of the user's ingredients this recipe contains
+      const matchingIngredients = ingredients.filter(userIng => 
+        recipeIngredients.some(recipeIng => 
+          recipeIng.includes(userIng.toLowerCase()) || userIng.toLowerCase().includes(recipeIng)
+        )
+      );
+      
+      const matchScore = matchingIngredients.length;
+      const matchPercentage = Math.round((matchScore / ingredients.length) * 100);
+
       return {
         id: meal.idMeal,
         title: meal.strMeal,
@@ -97,11 +127,19 @@ router.post('/search', [
         area: meal.strArea,
         isVegetarian: !recipeIngredients.some(ing => 
           ['chicken', 'beef', 'pork', 'lamb', 'fish', 'shrimp', 'bacon', 'ham'].includes(ing)
-        )
+        ),
+        matchScore: matchScore,
+        matchPercentage: matchPercentage,
+        matchingIngredients: matchingIngredients
       };
     });
 
-    // Apply filters
+    // Filter recipes to only include those that match at least one ingredient
+    recipes = recipes.filter(recipe => recipe.matchScore > 0);
+    
+    console.log(`Recipes with ingredient matches: ${recipes.length}`);
+
+    // Apply dietary filters
     if (isVegetarian !== undefined) {
       recipes = recipes.filter(recipe => recipe.isVegetarian === isVegetarian);
     }
@@ -109,23 +147,20 @@ router.post('/search', [
     // Filter by time (keep recipes that can be made within the time limit)
     recipes = recipes.filter(recipe => recipe.cookingTime <= maxTimeMinutes);
 
-    // Sort by relevance (ingredients match count) and time
+    // Sort by relevance: prioritize recipes with more ingredient matches
     recipes.sort((a, b) => {
-      const aMatches = ingredients.filter(ing => 
-        a.ingredients.some(recipeIng => 
-          recipeIng.includes(ing.toLowerCase()) || ing.toLowerCase().includes(recipeIng)
-        )
-      ).length;
-      const bMatches = ingredients.filter(ing => 
-        b.ingredients.some(recipeIng => 
-          recipeIng.includes(ing.toLowerCase()) || ing.toLowerCase().includes(recipeIng)
-        )
-      ).length;
-      
-      if (aMatches !== bMatches) {
-        return bMatches - aMatches; // More matches first
+      // Primary sort: more matching ingredients first
+      if (a.matchScore !== b.matchScore) {
+        return b.matchScore - a.matchScore;
       }
-      return a.cookingTime - b.cookingTime; // Faster recipes first
+      
+      // Secondary sort: higher match percentage first
+      if (a.matchPercentage !== b.matchPercentage) {
+        return b.matchPercentage - a.matchPercentage;
+      }
+      
+      // Tertiary sort: faster recipes first
+      return a.cookingTime - b.cookingTime;
     });
 
     // Limit results to top 20
@@ -422,6 +457,116 @@ router.post('/search-history', [
     res.status(500).json({
       status: 'error',
       message: 'Server error while saving search query'
+    });
+  }
+});
+
+// @route   GET /api/recipes/:id
+// @desc    Get recipe details by ID from TheMealDB
+// @access  Public
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Validate recipe ID
+    if (!id || id.trim().length === 0) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Recipe ID is required'
+      });
+    }
+    
+    console.log(`Fetching recipe details for ID: ${id}`);
+    
+    // Make request to TheMealDB API to get recipe by ID
+    const apiUrl = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(id)}`;
+    
+    const response = await axios.get(apiUrl, {
+      timeout: 10000,
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'RecipeApp/1.0'
+      }
+    });
+    
+    if (response.status !== 200) {
+      throw new Error(`TheMealDB API returned status ${response.status}`);
+    }
+    
+    const data = response.data;
+    
+    if (!data.meals || data.meals.length === 0) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Recipe not found'
+      });
+    }
+    
+    const meal = data.meals[0];
+    
+    // Format the recipe data to include all available information
+    const recipeDetails = {
+      id: meal.idMeal,
+      title: meal.strMeal,
+      image: meal.strMealThumb,
+      category: meal.strCategory,
+      area: meal.strArea,
+      instructions: meal.strInstructions,
+      tags: meal.strTags ? meal.strTags.split(',') : [],
+      youtube: meal.strYoutube,
+      source: meal.strSource,
+      
+      // Process ingredients and measurements
+      ingredients: [],
+      
+      // Additional fields
+      drinkAlternate: meal.strDrinkAlternate,
+      creativeCommonsConfirmed: meal.strCreativeCommonsConfirmed,
+      dateModified: meal.dateModified
+    };
+    
+    // Extract ingredients and measurements
+    for (let i = 1; i <= 20; i++) {
+      const ingredient = meal[`strIngredient${i}`];
+      const measure = meal[`strMeasure${i}`];
+      
+      if (ingredient && ingredient.trim()) {
+        recipeDetails.ingredients.push({
+          name: ingredient.trim(),
+          measure: measure ? measure.trim() : '',
+          full: measure && measure.trim() ? `${measure.trim()} ${ingredient.trim()}` : ingredient.trim()
+        });
+      }
+    }
+    
+    console.log(`Successfully fetched recipe: ${meal.strMeal}`);
+    
+    res.json({
+      status: 'success',
+      message: 'Recipe details retrieved successfully',
+      data: recipeDetails
+    });
+    
+  } catch (error) {
+    console.error('Get recipe by ID error:', error);
+    
+    if (error.code === 'ECONNABORTED') {
+      return res.status(408).json({
+        status: 'error',
+        message: 'Request timeout - API is taking too long to respond'
+      });
+    }
+    
+    if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
+      return res.status(503).json({
+        status: 'error',
+        message: 'Recipe API is currently unavailable'
+      });
+    }
+    
+    res.status(500).json({
+      status: 'error',
+      message: 'Server error while fetching recipe details'
     });
   }
 });

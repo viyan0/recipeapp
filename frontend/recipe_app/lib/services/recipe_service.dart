@@ -88,9 +88,14 @@ class RecipeService {
         },
       );
 
+      print('Recipe detail response status: ${response.statusCode}');
+      print('Recipe detail response body: ${response.body}');
+      
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         if (responseData['status'] == 'success' && responseData['data'] != null) {
+          print('Recipe detail data structure: ${responseData['data'].runtimeType}');
+          print('Recipe detail keys: ${responseData['data'].keys}');
           return responseData['data'];
         } else {
           throw Exception(responseData['message'] ?? 'Failed to get recipe');
