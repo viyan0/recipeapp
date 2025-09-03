@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/recipe_service.dart';
+import '../services/favorites_service.dart';
 
 class RecipeDetailScreen extends StatefulWidget {
   final Map<String, dynamic> recipe;
@@ -14,11 +15,14 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   Map<String, dynamic>? fullRecipeData;
   bool isLoading = true;
   String errorMessage = '';
+  bool isFavorited = false;
+  bool isTogglingFavorite = false;
 
   @override
   void initState() {
     super.initState();
     _loadRecipeDetails();
+    _checkFavoriteStatus();
   }
 
   Future<void> _loadRecipeDetails() async {
@@ -42,6 +46,65 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     }
   }
 
+  Future<void> _checkFavoriteStatus() async {
+    try {
+      final favoriteStatus = await FavoritesService.isFavorited(widget.recipe['id'].toString());
+      setState(() {
+        isFavorited = favoriteStatus;
+      });
+    } catch (e) {
+      print('Error checking favorite status: $e');
+      // Don't show error to user, just keep default false state
+    }
+  }
+
+  Future<void> _toggleFavorite() async {
+    if (isTogglingFavorite) return;
+
+    setState(() {
+      isTogglingFavorite = true;
+    });
+
+    try {
+      final recipe = fullRecipeData ?? widget.recipe;
+      final newStatus = await FavoritesService.toggleFavorite(
+        recipeId: widget.recipe['id'].toString(),
+        recipeTitle: recipe['title'] ?? recipe['strMeal'] ?? 'Unknown Recipe',
+        recipeImage: recipe['image'] ?? recipe['strMealThumb'],
+        recipeCategory: recipe['category'] ?? recipe['strCategory'],
+        recipeArea: recipe['area'] ?? recipe['strArea'],
+      );
+
+      setState(() {
+        isFavorited = newStatus;
+        isTogglingFavorite = false;
+      });
+
+      // Show feedback to user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            newStatus ? 'Added to favorites!' : 'Removed from favorites!',
+          ),
+          backgroundColor: newStatus ? Colors.green : Colors.orange,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      setState(() {
+        isTogglingFavorite = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceAll('Exception: ', '')),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final recipe = fullRecipeData ?? widget.recipe;
@@ -54,6 +117,25 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
         ),
         backgroundColor: Colors.orange[600],
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: isTogglingFavorite
+                ? SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : Icon(
+                    isFavorited ? Icons.favorite : Icons.favorite_border,
+                    color: Colors.white,
+                  ),
+            onPressed: isTogglingFavorite ? null : _toggleFavorite,
+            tooltip: isFavorited ? 'Remove from favorites' : 'Add to favorites',
+          ),
+        ],
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())

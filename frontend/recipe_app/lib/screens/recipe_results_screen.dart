@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
+import '../services/favorites_service.dart';
 import 'recipe_detail_screen.dart';
 
 class RecipeResultsScreen extends StatefulWidget {
@@ -23,6 +24,78 @@ class RecipeResultsScreen extends StatefulWidget {
 }
 
 class _RecipeResultsScreenState extends State<RecipeResultsScreen> {
+  Map<String, bool> _favoriteStatus = {};
+  Map<String, bool> _togglingFavorites = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _checkFavoriteStatuses();
+  }
+
+  Future<void> _checkFavoriteStatuses() async {
+    for (final recipe in widget.recipes) {
+      final recipeId = recipe['id'].toString();
+      try {
+        final isFavorited = await FavoritesService.isFavorited(recipeId);
+        setState(() {
+          _favoriteStatus[recipeId] = isFavorited;
+        });
+      } catch (e) {
+        // If error checking status, default to false
+        setState(() {
+          _favoriteStatus[recipeId] = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _toggleFavorite(String recipeId, Map<String, dynamic> recipe) async {
+    if (_togglingFavorites[recipeId] == true) return;
+
+    setState(() {
+      _togglingFavorites[recipeId] = true;
+    });
+
+    try {
+      final newStatus = await FavoritesService.toggleFavorite(
+        recipeId: recipeId,
+        recipeTitle: recipe['title'] ?? 'Unknown Recipe',
+        recipeImage: recipe['image'],
+        recipeCategory: recipe['category'],
+        recipeArea: recipe['area'],
+      );
+
+      setState(() {
+        _favoriteStatus[recipeId] = newStatus;
+        _togglingFavorites[recipeId] = false;
+      });
+
+      // Show feedback to user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            newStatus ? 'Added to favorites!' : 'Removed from favorites!',
+          ),
+          backgroundColor: newStatus ? Colors.green : Colors.orange,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      setState(() {
+        _togglingFavorites[recipeId] = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceAll('Exception: ', '')),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
   Future<void> _logout() async {
     await AuthService.logout();
     Navigator.pushReplacementNamed(context, '/welcome');
@@ -265,7 +338,38 @@ class _RecipeResultsScreenState extends State<RecipeResultsScreen> {
                                 ),
                             ],
                           ),
-                          trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // Favorite button
+                              IconButton(
+                                icon: _togglingFavorites[recipe['id'].toString()] == true
+                                    ? SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor: AlwaysStoppedAnimation<Color>(Colors.orange[600]!),
+                                        ),
+                                      )
+                                    : Icon(
+                                        _favoriteStatus[recipe['id'].toString()] == true 
+                                            ? Icons.favorite 
+                                            : Icons.favorite_border,
+                                        color: _favoriteStatus[recipe['id'].toString()] == true 
+                                            ? Colors.red 
+                                            : Colors.grey[600],
+                                      ),
+                                onPressed: _togglingFavorites[recipe['id'].toString()] == true 
+                                    ? null 
+                                    : () => _toggleFavorite(recipe['id'].toString(), recipe),
+                                tooltip: _favoriteStatus[recipe['id'].toString()] == true 
+                                    ? 'Remove from favorites' 
+                                    : 'Add to favorites',
+                              ),
+                              Icon(Icons.arrow_forward_ios, size: 16),
+                            ],
+                          ),
                           onTap: () {
                             Navigator.push(
                               context,

@@ -216,18 +216,21 @@ const initTables = async () => {
       )
     `);
 
-    // Create favourites table
+    // Create favourites table (updated to use external recipe IDs)
     await client.query(`
       CREATE TABLE IF NOT EXISTS favourites (
         id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
-        recipe_id INTEGER NOT NULL,
+        external_recipe_id VARCHAR(50) NOT NULL,
+        recipe_title VARCHAR(200),
+        recipe_image TEXT,
+        recipe_category VARCHAR(100),
+        recipe_area VARCHAR(100),
         added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         notes TEXT,
         rating INTEGER CHECK (rating >= 1 AND rating <= 5),
-        UNIQUE(user_id, recipe_id),
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-        FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE
+        UNIQUE(user_id, external_recipe_id),
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       )
     `);
 
@@ -238,7 +241,7 @@ const initTables = async () => {
       CREATE INDEX IF NOT EXISTS idx_search_history_user_id ON search_history(user_id);
       CREATE INDEX IF NOT EXISTS idx_search_history_timestamp ON search_history(search_timestamp);
       CREATE INDEX IF NOT EXISTS idx_favourites_user_id ON favourites(user_id);
-      CREATE INDEX IF NOT EXISTS idx_favourites_recipe_id ON favourites(recipe_id);
+      CREATE INDEX IF NOT EXISTS idx_favourites_external_recipe_id ON favourites(external_recipe_id);
     `);
 
     console.log('✅ Database tables initialized successfully');

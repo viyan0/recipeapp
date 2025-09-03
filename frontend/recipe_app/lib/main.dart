@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'screens/welcome_screen.dart';
 import 'screens/auth_screen.dart';
 import 'screens/search_screen.dart';
+import 'screens/main_navigation_screen.dart';
 import 'screens/otp_verification_screen.dart';
 import 'services/auth_service.dart';
 
@@ -39,6 +40,7 @@ class RecipeApp extends StatelessWidget {
         '/welcome': (context) => WelcomeScreen(),
         '/auth': (context) => AuthScreen(),
         '/search': (context) => SearchScreen(),
+        '/main': (context) => MainNavigationScreen(),
       },
     );
   }

@@ -82,3 +82,5 @@ When you verify a domain with Resend:
 - Production behavior unchanged
 
 The system now gracefully handles both development and production scenarios!
+
+

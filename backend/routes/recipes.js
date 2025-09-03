@@ -495,6 +495,44 @@ router.post('/search-history', [
   }
 });
 
+// @route   GET /api/recipes/favourites
+// @desc    Get user's favourite recipes
+// @access  Private
+router.get('/favourites', protect, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    const result = await pool.query(`
+      SELECT 
+        f.id,
+        f.external_recipe_id,
+        f.recipe_title,
+        f.recipe_image,
+        f.recipe_category,
+        f.recipe_area,
+        f.added_at,
+        f.notes,
+        f.rating
+      FROM favourites f
+      WHERE f.user_id = $1
+      ORDER BY f.added_at DESC
+    `, [userId]);
+    
+    res.json({
+      status: 'success',
+      data: {
+        favourites: result.rows
+      }
+    });
+  } catch (error) {
+    console.error('Get favourites error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Server error while fetching favourites'
+    });
+  }
+});
+
 // @route   GET /api/recipes/:id
 // @desc    Get recipe details by ID from TheMealDB
 // @access  Public
@@ -704,10 +742,10 @@ router.post('/:id/favorite', protect, async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
-    const { notes, rating } = req.body;
+    const { notes, rating, recipe_title, recipe_image, recipe_category, recipe_area } = req.body;
     
     // Validate recipe ID
-    if (!id || isNaN(parseInt(id))) {
+    if (!id || id.trim().length === 0) {
       return res.status(400).json({
         status: 'error',
         message: 'Invalid recipe ID'
@@ -715,7 +753,7 @@ router.post('/:id/favorite', protect, async (req, res) => {
     }
 
     // Validate rating if provided
-    if (rating !== undefined && (rating < 1 || rating > 5)) {
+    if (rating !== undefined && rating !== null && (rating < 1 || rating > 5)) {
       return res.status(400).json({
         status: 'error',
         message: 'Rating must be between 1 and 5'
@@ -724,14 +762,14 @@ router.post('/:id/favorite', protect, async (req, res) => {
     
     // Check if already favorited
     const existingFavorite = await pool.query(
-      'SELECT * FROM favourites WHERE user_id = $1 AND recipe_id = $2', 
+      'SELECT * FROM favourites WHERE user_id = $1 AND external_recipe_id = $2', 
       [userId, id]
     );
     
     if (existingFavorite.rows.length > 0) {
       // Remove from favourites
       await pool.query(
-        'DELETE FROM favourites WHERE user_id = $1 AND recipe_id = $2', 
+        'DELETE FROM favourites WHERE user_id = $1 AND external_recipe_id = $2', 
         [userId, id]
       );
       res.json({ 
@@ -740,10 +778,10 @@ router.post('/:id/favorite', protect, async (req, res) => {
         data: { isFavorited: false } 
       });
     } else {
-      // Add to favourites
+      // Add to favourites with recipe metadata
       await pool.query(
-        'INSERT INTO favourites (user_id, recipe_id, notes, rating) VALUES ($1, $2, $3, $4)', 
-        [userId, id, notes || null, rating || null]
+        'INSERT INTO favourites (user_id, external_recipe_id, recipe_title, recipe_image, recipe_category, recipe_area, notes, rating) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', 
+        [userId, id, recipe_title || null, recipe_image || null, recipe_category || null, recipe_area || null, notes || null, rating || null]
       );
       res.json({ 
         status: 'success', 
@@ -769,31 +807,39 @@ router.post('/:id/favorite', protect, async (req, res) => {
   }
 });
 
-// @route   GET /api/recipes/favourites
-// @desc    Get user's favourite recipes
+// @route   GET /api/recipes/:id/favorite-status
+// @desc    Check if a recipe is favorited by the user
 // @access  Private
-router.get('/favourites', protect, async (req, res) => {
+router.get('/:id/favorite-status', protect, async (req, res) => {
   try {
+    const { id } = req.params;
     const userId = req.user.id;
     
-    const result = await pool.query(`
-      SELECT f.*, f.recipe_id as external_recipe_id
-      FROM favourites f
-      WHERE f.user_id = $1
-      ORDER BY f.added_at DESC
-    `, [userId]);
+    // Validate recipe ID
+    if (!id || id.trim().length === 0) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid recipe ID'
+      });
+    }
+    
+    // Check if recipe is favorited
+    const result = await pool.query(
+      'SELECT id FROM favourites WHERE user_id = $1 AND external_recipe_id = $2', 
+      [userId, id]
+    );
     
     res.json({
       status: 'success',
       data: {
-        favourites: result.rows
+        isFavorited: result.rows.length > 0
       }
     });
   } catch (error) {
-    console.error('Get favourites error:', error);
+    console.error('Check favorite status error:', error);
     res.status(500).json({
       status: 'error',
-      message: 'Server error while fetching favourites'
+      message: 'Server error while checking favorite status'
     });
   }
 });

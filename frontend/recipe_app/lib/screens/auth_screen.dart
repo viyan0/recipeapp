@@ -119,7 +119,7 @@ class _AuthScreenState extends State<AuthScreen> {
         );
 
         // Navigate to search screen
-        Navigator.pushReplacementNamed(context, '/search');
+        Navigator.pushReplacementNamed(context, '/main');
       }
     } catch (e) {
       setState(() {
