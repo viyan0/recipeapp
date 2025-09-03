@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'search_screen.dart';
 import 'favorites_screen.dart';
+import 'settings_screen.dart';
 import '../services/auth_service.dart';
 
 class MainNavigationScreen extends StatefulWidget {
@@ -23,46 +24,19 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     ];
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+
 
   Future<void> _logout() async {
     await AuthService.logout();
     Navigator.pushReplacementNamed(context, '/welcome');
   }
 
-  void _showMenuDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Menu'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: Icon(Icons.logout, color: Colors.red),
-                title: Text('Logout'),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _logout();
-                },
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              child: Text('Close'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
+  void _goToSettings() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SettingsScreen(),
+      ),
     );
   }
 
@@ -94,31 +68,15 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               tooltip: 'Refresh',
             ),
           IconButton(
-            icon: Icon(Icons.menu),
-            onPressed: _showMenuDialog,
-            tooltip: 'Menu',
+            icon: Icon(Icons.settings),
+            onPressed: _goToSettings,
+            tooltip: 'Settings',
           ),
         ],
       ),
       body: IndexedStack(
         index: _selectedIndex,
         children: _screens,
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favorites',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.orange[600],
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
       ),
     );
   }

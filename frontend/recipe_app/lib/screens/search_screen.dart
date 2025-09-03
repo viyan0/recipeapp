@@ -358,20 +358,11 @@ class _SearchScreenState extends State<SearchScreen> {
                               child: Row(
                                 children: [
                                   Text(
-                                    '${category.key} (5)',
+                                    category.key,
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
                                       color: isExpanded ? Colors.blue[700] : Colors.grey[700],
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    isExpanded ? 'showing all' : 'showing 2',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: Colors.grey[500],
-                                      fontWeight: FontWeight.w400,
                                     ),
                                   ),
                                   Spacer(),
@@ -416,79 +407,6 @@ class _SearchScreenState extends State<SearchScreen> {
                                   ),
                                 );
                               }).toList(),
-                            ),
-                          ] else ...[
-                            // Show top 2 ingredients when collapsed (out of 5 total)
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Wrap(
-                                    spacing: 8,
-                                    runSpacing: 6,
-                                    children: category.value.take(2).map((ingredient) {
-                                      final isSelected = _selectedPreferences.contains(ingredient);
-                                      return GestureDetector(
-                                        onTap: () => _togglePreference(ingredient),
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                          decoration: BoxDecoration(
-                                            color: isSelected ? Colors.orange[100] : Colors.white,
-                                            borderRadius: BorderRadius.circular(16),
-                                            border: Border.all(
-                                              color: isSelected ? Colors.orange[400]! : Colors.grey[300]!,
-                                              width: isSelected ? 1.5 : 1,
-                                            ),
-                                          ),
-                                          child: Text(
-                                            ingredient,
-                                            style: TextStyle(
-                                              color: isSelected ? Colors.orange[700] : Colors.grey[600],
-                                              fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-                                              fontSize: 13,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
-                                // Always show "+ 3 more" since each category has exactly 5 ingredients
-                                SizedBox(width: 8),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _expandedCategories.add(category.key);
-                                    });
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      color: Colors.blue[50],
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(color: Colors.blue[200]!),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          '+ 3 more',
-                                          style: TextStyle(
-                                            color: Colors.blue[700],
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                        SizedBox(width: 4),
-                                        Icon(
-                                          Icons.keyboard_arrow_down,
-                                          color: Colors.blue[700],
-                                          size: 16,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
                             ),
                           ],
                         ],

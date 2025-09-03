@@ -291,40 +291,89 @@ class AuthService {
   }) async {
     try {
       final token = await getAuthToken();
+      if (token == null) {
+        throw Exception('Authentication required');
+      }
+      
+      // Build URL with query parameter
+      final uri = Uri.parse('$baseUrl/api/users/$userId/dietary-preference').replace(
+        queryParameters: {
+          'isVegetarian': isVegetarian.toString(),
+        },
+      );
+      
       final response = await http.put(
-        Uri.parse('$baseUrl/api/users/$userId/dietary-preference'),
+        uri,
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
           'Authorization': 'Bearer $token',
         },
-        body: jsonEncode({
-          'isVegetarian': isVegetarian,
-        }),
       );
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        if (responseData['status'] == 'success' && responseData['data'] != null) {
-          final userData = responseData['data'];
-          final user = User(
-            id: userData['id'].toString(),
-            email: userData['email'],
-            username: userData['username'],
-            isVegetarian: userData['isVegetarian'] ?? false,
-            createdAt: DateTime.parse(userData['createdAt']),
-            token: token,
-          );
-          await saveUserData(user);
-          return user;
-        } else {
-          throw Exception(responseData['message'] ?? 'Update failed');
-        }
+        // The backend returns the user data directly, not wrapped in a 'data' field
+        final user = User(
+          id: responseData['id'].toString(),
+          email: responseData['email'],
+          username: responseData['username'],
+          isVegetarian: responseData['isVegetarian'] ?? false,
+          createdAt: DateTime.parse(responseData['createdAt']),
+          token: token,
+        );
+        await saveUserData(user);
+        return user;
       } else {
         final errorData = jsonDecode(response.body);
         throw Exception(errorData['message'] ?? 'Update failed');
       }
     } catch (e) {
+      print('Update dietary preference error: $e');
+      if (e.toString().contains('SocketException') || e.toString().contains('Connection refused')) {
+        throw Exception('Cannot connect to server. Please check if the backend is running.');
+      }
+      throw Exception('Network error: $e');
+    }
+  }
+
+  // Delete user account
+  static Future<bool> deleteAccount({
+    required String userId,
+  }) async {
+    try {
+      final token = await getAuthToken();
+      if (token == null) {
+        throw Exception('Authentication required');
+      }
+      
+      final response = await http.delete(
+        Uri.parse('$baseUrl/api/users/$userId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        if (responseData['status'] == 'success') {
+          // Clear local data after successful deletion
+          await logout();
+          return true;
+        } else {
+          throw Exception(responseData['message'] ?? 'Account deletion failed');
+        }
+      } else {
+        final errorData = jsonDecode(response.body);
+        throw Exception(errorData['message'] ?? 'Account deletion failed');
+      }
+    } catch (e) {
+      print('Delete account error: $e');
+      if (e.toString().contains('SocketException') || e.toString().contains('Connection refused')) {
+        throw Exception('Cannot connect to server. Please check if the backend is running.');
+      }
       throw Exception('Network error: $e');
     }
   }
