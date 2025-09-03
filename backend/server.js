@@ -12,6 +12,7 @@ const errorHandler = require('./middleware/errorHandler');
 const authRoutes = require('./routes/auth');
 const recipeRoutes = require('./routes/recipes');
 const userRoutes = require('./routes/users');
+const emailRoutes = require('./routes/email');
 
 const app = express();
 
@@ -118,6 +119,7 @@ app.get('/health', async (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/recipes', recipeRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/email', emailRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
@@ -139,6 +141,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth`);
   console.log(`🍳 Recipe endpoints: http://localhost:${PORT}/api/recipes`);
   console.log(`👤 User endpoints: http://localhost:${PORT}/api/users`);
+  console.log(`📧 Email endpoints: http://localhost:${PORT}/api/email`);
   console.log(`🌐 Network access: http://192.168.28.245:${PORT}`);
 });
 

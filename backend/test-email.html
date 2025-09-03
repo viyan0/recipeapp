@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Service Test - Recipe App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fafafa;
+        }
+        .test-section h3 {
+            color: #34495e;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-online {
+            background-color: #27ae60;
+        }
+        .status-offline {
+            background-color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📧 Email Service Test - Recipe App</h1>
+        
+        <!-- Status Check -->
+        <div class="test-section">
+            <h3>🔍 Service Status</h3>
+            <button onclick="checkStatus()">Check Status</button>
+            <div id="statusResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Test Email -->
+        <div class="test-section">
+            <h3>🧪 Send Test Email</h3>
+            <div class="form-group">
+                <label for="testEmail">To Email:</label>
+                <input type="email" id="testEmail" placeholder="Enter your email address" value="">
+            </div>
+            <button onclick="sendTestEmail()">Send Test Email</button>
+            <div id="testResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Welcome Email -->
+        <div class="test-section">
+            <h3>👋 Send Welcome Email</h3>
+            <div class="form-group">
+                <label for="welcomeEmail">To Email:</label>
+                <input type="email" id="welcomeEmail" placeholder="Enter email address">
+            </div>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" placeholder="Enter username">
+            </div>
+            <button onclick="sendWelcomeEmail()">Send Welcome Email</button>
+            <div id="welcomeResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Custom Email -->
+        <div class="test-section">
+            <h3>✉️ Send Custom Email</h3>
+            <div class="form-group">
+                <label for="customEmail">To Email:</label>
+                <input type="email" id="customEmail" placeholder="Enter email address">
+            </div>
+            <div class="form-group">
+                <label for="subject">Subject:</label>
+                <input type="text" id="subject" placeholder="Enter email subject">
+            </div>
+            <div class="form-group">
+                <label for="htmlContent">HTML Content:</label>
+                <textarea id="htmlContent" placeholder="Enter HTML content for the email"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="textContent">Text Content (optional):</label>
+                <textarea id="textContent" placeholder="Enter plain text content (optional)"></textarea>
+            </div>
+            <button onclick="sendCustomEmail()">Send Custom Email</button>
+            <div id="customResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Recipe Share Email -->
+        <div class="test-section">
+            <h3>🍽️ Send Recipe Share Email</h3>
+            <div class="form-group">
+                <label for="shareEmail">To Email:</label>
+                <input type="email" id="shareEmail" placeholder="Enter email address">
+            </div>
+            <div class="form-group">
+                <label for="fromUsername">From Username:</label>
+                <input type="text" id="fromUsername" placeholder="Enter your username">
+            </div>
+            <div class="form-group">
+                <label for="recipeTitle">Recipe Title:</label>
+                <input type="text" id="recipeTitle" placeholder="Enter recipe title">
+            </div>
+            <div class="form-group">
+                <label for="recipeUrl">Recipe URL:</label>
+                <input type="url" id="recipeUrl" placeholder="Enter recipe URL">
+            </div>
+            <button onclick="sendRecipeShareEmail()">Send Recipe Share Email</button>
+            <div id="shareResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000/api/email';
+
+        // Utility function to show results
+        function showResult(elementId, data, isSuccess = true) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `result ${isSuccess ? 'success' : 'error'}`;
+            element.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+        }
+
+        // Check service status
+        async function checkStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/status`);
+                const data = await response.json();
+                showResult('statusResult', data, data.success);
+            } catch (error) {
+                showResult('statusResult', `Error: ${error.message}`, false);
+            }
+        }
+
+        // Send test email
+        async function sendTestEmail() {
+            const email = document.getElementById('testEmail').value.trim();
+            if (!email) {
+                alert('Please enter an email address');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/test`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ to: email })
+                });
+                const data = await response.json();
+                showResult('testResult', data, data.success);
+            } catch (error) {
+                showResult('testResult', `Error: ${error.message}`, false);
+            }
+        }
+
+        // Send welcome email
+        async function sendWelcomeEmail() {
+            const email = document.getElementById('welcomeEmail').value.trim();
+            const username = document.getElementById('username').value.trim();
+            
+            if (!email || !username) {
+                alert('Please enter both email and username');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/welcome`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ to: email, username: username })
+                });
+                const data = await response.json();
+                showResult('welcomeResult', data, data.success);
+            } catch (error) {
+                showResult('welcomeResult', `Error: ${error.message}`, false);
+            }
+        }
+
+        // Send custom email
+        async function sendCustomEmail() {
+            const email = document.getElementById('customEmail').value.trim();
+            const subject = document.getElementById('subject').value.trim();
+            const htmlContent = document.getElementById('htmlContent').value.trim();
+            const textContent = document.getElementById('textContent').value.trim();
+            
+            if (!email || !subject || !htmlContent) {
+                alert('Please enter email, subject, and HTML content');
+                return;
+            }
+
+            const payload = { to: email, subject: subject, htmlContent: htmlContent };
+            if (textContent) payload.textContent = textContent;
+
+            try {
+                const response = await fetch(`${API_BASE}/custom`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                showResult('customResult', data, data.success);
+            } catch (error) {
+                showResult('customResult', `Error: ${error.message}`, false);
+            }
+        }
+
+        // Send recipe share email
+        async function sendRecipeShareEmail() {
+            const email = document.getElementById('shareEmail').value.trim();
+            const fromUsername = document.getElementById('fromUsername').value.trim();
+            const recipeTitle = document.getElementById('recipeTitle').value.trim();
+            const recipeUrl = document.getElementById('recipeUrl').value.trim();
+            
+            if (!email || !fromUsername || !recipeTitle || !recipeUrl) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/share-recipe`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        to: email, 
+                        fromUsername: fromUsername, 
+                        recipeTitle: recipeTitle, 
+                        recipeUrl: recipeUrl 
+                    })
+                });
+                const data = await response.json();
+                showResult('shareResult', data, data.success);
+            } catch (error) {
+                showResult('shareResult', `Error: ${error.message}`, false);
+            }
+        }
+
+        // Auto-check status on page load
+        window.onload = function() {
+            checkStatus();
+        };
+    </script>
+</body>
+</html>

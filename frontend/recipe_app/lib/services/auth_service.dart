@@ -45,8 +45,8 @@ class AuthService {
     await prefs.setBool('isLoggedIn', false);
   }
 
-  // Sign up with dietary preference
-  static Future<User> signUp({
+  // Sign up with dietary preference - creates account and sends OTP
+  static Future<Map<String, dynamic>> signUp({
     required String email,
     required String username,
     required String password,
@@ -77,25 +77,38 @@ class AuthService {
       if (response.statusCode == 201) {
         final responseData = jsonDecode(response.body);
         
-        // Handle the backend response format
+        // Handle the backend response format - signup now returns verification info
         if (responseData['status'] == 'success' && responseData['data'] != null) {
-          final userData = responseData['data'];
-          final user = User(
-            id: userData['id'].toString(),
-            email: userData['email'],
-            username: userData['username'],
-            isVegetarian: userData['isVegetarian'] ?? false,
-            createdAt: DateTime.parse(userData['createdAt']),
-            token: responseData['token'],
-          );
-          await saveUserData(user);
-          return user;
+          return {
+            'success': true,
+            'message': responseData['message'],
+            'email': responseData['data']['email'],
+            'username': responseData['data']['username'],
+            'needsVerification': true,
+            'verificationEmailSent': responseData['data']['verificationEmailSent'],
+            'developmentOTP': responseData['data']['developmentOTP'],
+          };
         } else {
           throw Exception(responseData['message'] ?? 'Sign up failed');
         }
       } else {
         final errorData = jsonDecode(response.body);
-        throw Exception(errorData['message'] ?? 'Sign up failed');
+        String errorMessage = errorData['message'] ?? 'Sign up failed';
+        
+        // Handle validation errors more clearly
+        if (errorData['errors'] != null && errorData['errors'] is List) {
+          List<String> validationErrors = [];
+          for (var error in errorData['errors']) {
+            if (error['msg'] != null) {
+              validationErrors.add(error['msg']);
+            }
+          }
+          if (validationErrors.isNotEmpty) {
+            errorMessage = validationErrors.join('\n');
+          }
+        }
+        
+        throw Exception(errorMessage);
       }
     } catch (e) {
       print('Sign up error: $e'); // Debug log
@@ -111,6 +124,96 @@ class AuthService {
       if (e.toString().contains('XMLHttpRequest')) {
         throw Exception('CORS error. Please check if the backend CORS configuration allows requests from this origin.');
       }
+      throw Exception('Network error: $e');
+    }
+  }
+
+  // Verify OTP code
+  static Future<User> verifyOTP({
+    required String email,
+    required String otp,
+  }) async {
+    try {
+      final url = '$baseUrl/api/auth/verify-email';
+      print('Attempting to verify OTP at: $url'); // Debug log
+      
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: jsonEncode({
+          'email': email,
+          'otp': otp,
+        }),
+      );
+
+      print('Response status: ${response.statusCode}'); // Debug log
+      print('Response body: ${response.body}'); // Debug log
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        
+        if (responseData['status'] == 'success' && responseData['data'] != null) {
+          // After successful verification, user needs to login
+          return User(
+            id: '', // Will be set after login
+            email: responseData['data']['email'],
+            username: responseData['data']['username'],
+            isVegetarian: false,
+            createdAt: DateTime.now(),
+            token: null, // No token yet - user needs to login
+          );
+        } else {
+          throw Exception(responseData['message'] ?? 'Verification failed');
+        }
+      } else {
+        final errorData = jsonDecode(response.body);
+        throw Exception(errorData['message'] ?? 'Verification failed');
+      }
+    } catch (e) {
+      print('OTP verification error: $e'); // Debug log
+      if (e.toString().contains('SocketException') || e.toString().contains('Connection refused')) {
+        throw Exception('Cannot connect to server. Please check if the backend is running.');
+      }
+      throw Exception('Network error: $e');
+    }
+  }
+
+  // Resend OTP
+  static Future<bool> resendOTP({
+    required String email,
+  }) async {
+    try {
+      final url = '$baseUrl/api/auth/resend-verification';
+      print('Attempting to resend OTP at: $url'); // Debug log
+      
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: jsonEncode({
+          'email': email,
+        }),
+      );
+
+      print('Response status: ${response.statusCode}'); // Debug log
+      print('Response body: ${response.body}'); // Debug log
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        return responseData['status'] == 'success';
+      } else {
+        final errorData = jsonDecode(response.body);
+        throw Exception(errorData['message'] ?? 'Failed to resend OTP');
+      }
+    } catch (e) {
+      print('Resend OTP error: $e'); // Debug log
       throw Exception('Network error: $e');
     }
   }

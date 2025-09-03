@@ -31,7 +31,7 @@ const protect = async (req, res, next) => {
 
       // Get user from database
       const result = await pool.query(
-        'SELECT id, username, email, full_name, avatar_url, is_vegetarian, created_at FROM users WHERE id = $1 AND password_hash IS NOT NULL',
+        'SELECT id, username, email, full_name, avatar_url, is_vegetarian, email_verified, created_at FROM users WHERE id = $1 AND password_hash IS NOT NULL',
         [decoded.id]
       );
 
@@ -42,8 +42,20 @@ const protect = async (req, res, next) => {
         });
       }
 
-      // Check if user account is still active (you can add more checks here)
       const user = result.rows[0];
+
+      // Check if user's email is verified
+      if (!user.email_verified) {
+        return res.status(403).json({
+          status: 'error',
+          message: 'Email not verified. Please verify your email before accessing this resource.',
+          code: 'EMAIL_NOT_VERIFIED',
+          data: {
+            email: user.email,
+            needsVerification: true
+          }
+        });
+      }
       
       // Add user to request object
       req.user = user;

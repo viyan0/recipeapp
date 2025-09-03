@@ -142,7 +142,7 @@ const initTables = async () => {
   try {
     const client = await pool.connect();
     
-    // Create users table with dietary preference
+    // Create users table with dietary preference and email verification
     await client.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -152,9 +152,37 @@ const initTables = async () => {
         full_name VARCHAR(100),
         avatar_url TEXT,
         is_vegetarian BOOLEAN DEFAULT false,
+        email_verified BOOLEAN DEFAULT false,
+        email_verification_token VARCHAR(255),
+        email_verification_expires TIMESTAMP,
+        email_verification_sent_at TIMESTAMP,
+        email_verification_otp VARCHAR(6),
+        otp_expires_at TIMESTAMP,
+        otp_attempts INTEGER DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
+    `);
+
+    // Add indexes for email verification
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_users_verification_token ON users(email_verification_token)
+    `);
+    
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_users_email_verified ON users(email_verified)
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_users_otp ON users(email_verification_otp)
+    `);
+
+    // Add OTP columns to existing users table if they don't exist
+    await client.query(`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS email_verification_otp VARCHAR(6),
+      ADD COLUMN IF NOT EXISTS otp_expires_at TIMESTAMP,
+      ADD COLUMN IF NOT EXISTS otp_attempts INTEGER DEFAULT 0
     `);
 
     // Create recipes table

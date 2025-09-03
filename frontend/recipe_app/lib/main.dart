@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'screens/welcome_screen.dart';
 import 'screens/auth_screen.dart';
 import 'screens/search_screen.dart';
+import 'screens/otp_verification_screen.dart';
 import 'services/auth_service.dart';
 
 void main() {

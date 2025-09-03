@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../models/user.dart';
 import '../config/app_config.dart';
+import 'otp_verification_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -45,24 +46,81 @@ class _AuthScreenState extends State<AuthScreen> {
     });
 
     try {
-      User user;
-      
       if (_isSignUp) {
-        user = await AuthService.signUp(
+        // Handle signup with OTP verification
+        final signupResult = await AuthService.signUp(
           email: _emailController.text.trim(),
           username: _usernameController.text.trim(),
           password: _passwordController.text,
           isVegetarian: _isVegetarian,
         );
+
+        if (signupResult['success'] == true && signupResult['needsVerification'] == true) {
+          // Check if email was sent or if we have a development OTP
+          String? developmentOTP = signupResult['developmentOTP'];
+          bool emailSent = signupResult['verificationEmailSent'] ?? false;
+          
+          // Show appropriate message
+          if (!emailSent && developmentOTP != null) {
+            // Development mode - show OTP in dialog
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text('Development Mode'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Email could not be sent (Resend restriction).'),
+                    SizedBox(height: 8),
+                    Text('Your verification code is:'),
+                    SizedBox(height: 8),
+                    Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.orange[50],
+                        border: Border.all(color: Colors.orange[200]!),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        developmentOTP,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 4,
+                          color: Colors.orange[800],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      // Navigate to OTP verification screen
+                      _navigateToOTPVerification(signupResult);
+                    },
+                    child: Text('Continue to Verification'),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            // Normal flow - navigate directly to verification
+            _navigateToOTPVerification(signupResult);
+          }
+        }
       } else {
-        user = await AuthService.login(
+        // Handle login
+        User user = await AuthService.login(
           email: _emailController.text.trim(),
           password: _passwordController.text,
         );
-      }
 
-      // Navigate to search screen
-      Navigator.pushReplacementNamed(context, '/search');
+        // Navigate to search screen
+        Navigator.pushReplacementNamed(context, '/search');
+      }
     } catch (e) {
       setState(() {
         _errorMessage = e.toString().replaceAll('Exception: ', '');
@@ -71,6 +129,34 @@ class _AuthScreenState extends State<AuthScreen> {
       setState(() {
         _isLoading = false;
       });
+    }
+  }
+
+  Future<void> _navigateToOTPVerification(Map<String, dynamic> signupResult) async {
+    final verificationResult = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => OTPVerificationScreen(
+          email: signupResult['email'],
+          username: signupResult['username'],
+        ),
+      ),
+    );
+
+    if (verificationResult == true) {
+      // Email verified successfully, show success message and switch to login
+      setState(() {
+        _isSignUp = false;
+        _errorMessage = '';
+        _passwordController.clear();
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Email verified successfully! Please log in to continue.'),
+          backgroundColor: Colors.green,
+        ),
+      );
     }
   }
 
