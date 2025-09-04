@@ -3,6 +3,7 @@ import 'search_screen.dart';
 import 'favorites_screen.dart';
 import 'settings_screen.dart';
 import '../services/auth_service.dart';
+import '../providers/theme_provider.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   @override
@@ -45,7 +46,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_selectedIndex == 0 ? 'Find Recipes' : 'My Favorites'),
-        backgroundColor: Colors.orange[600],
+        backgroundColor: ThemeProvider.enchantedEmerald,
         foregroundColor: Colors.white,
         automaticallyImplyLeading: false,
         actions: [

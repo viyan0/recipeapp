@@ -89,7 +89,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: Text('Logout', style: TextStyle(color: Colors.orange[600])),
+              child: Text('Logout', style: TextStyle(color: ThemeProvider.enchantedEmerald)),
             ),
           ],
         );
@@ -265,7 +265,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Settings'),
-        backgroundColor: Colors.orange[600],
+        backgroundColor: ThemeProvider.enchantedEmerald,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -282,7 +282,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.person, color: Colors.orange[600], size: 24),
+                      Icon(Icons.person, color: ThemeProvider.enchantedEmerald, size: 24),
                       SizedBox(width: 12),
                       Text(
                         'Profile',
@@ -299,13 +299,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ListTile(
                       contentPadding: EdgeInsets.zero,
                       leading: CircleAvatar(
-                        backgroundColor: Colors.orange[100],
+                        backgroundColor: ThemeProvider.whisperGreen.withOpacity(0.3),
                         child: Text(
                           _currentUser!.username.isNotEmpty 
                             ? _currentUser!.username[0].toUpperCase()
                             : 'U',
                           style: TextStyle(
-                            color: Colors.orange[600],
+                            color: ThemeProvider.enchantedEmerald,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -340,7 +340,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.restaurant, color: Colors.orange[600], size: 24),
+                      Icon(Icons.restaurant, color: ThemeProvider.enchantedEmerald, size: 24),
                       SizedBox(width: 12),
                       Text(
                         'Dietary Preferences',
@@ -360,7 +360,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onChanged: _isLoading ? null : (bool value) {
                       _updateDietaryPreference(value);
                     },
-                    activeColor: Colors.orange[600],
+                    activeColor: ThemeProvider.enchantedEmerald,
                     secondary: Icon(
                       _isVegetarian ? Icons.eco : Icons.restaurant,
                       color: _isVegetarian ? Colors.green : Colors.grey[600],
@@ -376,7 +376,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             height: 16,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.orange[600]!),
+                              valueColor: AlwaysStoppedAnimation<Color>(ThemeProvider.enchantedEmerald!),
                             ),
                           ),
                           SizedBox(width: 12),
@@ -407,7 +407,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.palette, color: Colors.orange[600], size: 24),
+                      Icon(Icons.palette, color: ThemeProvider.enchantedEmerald, size: 24),
                       SizedBox(width: 12),
                       Text(
                         'Appearance',
@@ -438,7 +438,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                       );
                     },
-                    activeColor: Colors.orange[600],
+                    activeColor: ThemeProvider.enchantedEmerald,
                     secondary: Icon(
                       themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
                       color: themeProvider.isDarkMode ? Colors.amber : Colors.grey[600],
@@ -461,7 +461,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.account_circle, color: Colors.orange[600], size: 24),
+                      Icon(Icons.account_circle, color: ThemeProvider.enchantedEmerald, size: 24),
                       SizedBox(width: 12),
                       Text(
                         'Account',
@@ -478,11 +478,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   // Logout option
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    leading: Icon(Icons.logout, color: Colors.orange[600]),
+                    leading: Icon(Icons.logout, color: ThemeProvider.enchantedEmerald),
                     title: Text(
                       'Logout',
                       style: TextStyle(
-                        color: Colors.orange[600],
+                        color: ThemeProvider.enchantedEmerald,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

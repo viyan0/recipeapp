@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../services/auth_service.dart';
+import '../providers/theme_provider.dart';
 
 class OTPVerificationScreen extends StatefulWidget {
   final String email;
@@ -161,7 +162,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Colors.orange[600],
+                  color: ThemeProvider.enchantedEmerald,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -177,7 +178,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: _controllers[index].text.isNotEmpty 
-                          ? Colors.orange[600]! 
+                          ? ThemeProvider.enchantedEmerald! 
                           : Colors.grey[300]!,
                         width: 2,
                       ),
@@ -281,12 +282,12 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                       width: 16,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.orange[600]!),
+                        valueColor: AlwaysStoppedAnimation<Color>(ThemeProvider.enchantedEmerald!),
                       ),
                     )
                   : Text(
                       'Didn\'t receive the code? Resend',
-                      style: TextStyle(color: Colors.orange[600]),
+                      style: TextStyle(color: ThemeProvider.enchantedEmerald),
                     ),
               ),
             ],

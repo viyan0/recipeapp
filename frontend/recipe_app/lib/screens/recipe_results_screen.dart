@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../services/favorites_service.dart';
+import '../widgets/peaceful_recipe_card.dart';
+import '../widgets/peaceful_chip.dart';
+import '../widgets/peaceful_button.dart';
+import '../widgets/peaceful_transitions.dart';
+import '../widgets/peaceful_background.dart';
+import '../widgets/peaceful_snackbar.dart';
+import '../providers/theme_provider.dart';
 import 'recipe_detail_screen.dart';
 
 class RecipeResultsScreen extends StatefulWidget {
@@ -72,26 +79,19 @@ class _RecipeResultsScreenState extends State<RecipeResultsScreen> {
       });
 
       // Show feedback to user
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            newStatus ? 'Added to favorites!' : 'Removed from favorites!',
-          ),
-          backgroundColor: newStatus ? Colors.green : Colors.orange,
-          duration: Duration(seconds: 2),
-        ),
+      PeacefulSnackBar.showSuccess(
+        context,
+        message: newStatus ? 'Added to favorites!' : 'Removed from favorites!',
+        icon: newStatus ? Icons.favorite : Icons.favorite_border_outlined,
       );
     } catch (e) {
       setState(() {
         _togglingFavorites[recipeId] = false;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString().replaceAll('Exception: ', '')),
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 3),
-        ),
+      PeacefulSnackBar.showError(
+        context,
+        message: e.toString().replaceAll('Exception: ', ''),
       );
     }
   }
@@ -110,286 +110,276 @@ class _RecipeResultsScreenState extends State<RecipeResultsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Recipe Results'),
-        backgroundColor: Colors.orange[600],
-        foregroundColor: Colors.white,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: _logout,
-            tooltip: 'Logout',
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Search Summary Header
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.orange[50],
-              border: Border(bottom: BorderSide(color: Colors.orange[200]!)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.search, color: Colors.orange[600], size: 20),
-                    SizedBox(width: 8),
-                    Text(
-                      'Search Results',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.orange[800],
-                      ),
+      body: PeacefulBackground(
+        child: Column(
+          children: [
+            // Custom App Bar
+            Container(
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top + 16,
+                left: 20,
+                right: 20,
+                bottom: 16,
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(
+                      Icons.arrow_back_ios_outlined,
+                      color: ThemeProvider.deepSlate,
+                      size: 24,
                     ),
-                  ],
-                ),
-                SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 4,
-                  children: [
-                    // Ingredients
-                    ...widget.searchedIngredients.map((ingredient) => Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.orange[100],
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.orange[300]!),
+                  ),
+                  Expanded(
+                    child: Text(
+                      'Recipe Results',
+                      style: TextStyle(
+                        color: ThemeProvider.deepSlate,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
                       ),
-                      child: Text(
-                        ingredient,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  PeacefulIconButton(
+                    icon: Icons.logout_outlined,
+                    onPressed: _logout,
+                    tooltip: 'Logout',
+                    size: 20,
+                    color: ThemeProvider.deepSlate,
+                    backgroundColor: Colors.white.withOpacity(0.2),
+                  ),
+                ],
+              ),
+            ),
+            
+            // Search Summary Header
+            Container(
+              width: double.infinity,
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.2),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 20,
+                    spreadRadius: 0,
+                    offset: Offset(0, 8),
+                  ),
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.1),
+                    blurRadius: 20,
+                    spreadRadius: 0,
+                    offset: Offset(0, -4),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.search_outlined,
+                        color: ThemeProvider.softTeal,
+                        size: 24,
+                      ),
+                      SizedBox(width: 12),
+                      Text(
+                        'Search Results',
                         style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.orange[700],
-                          fontWeight: FontWeight.w500,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: ThemeProvider.deepSlate,
+                          letterSpacing: 0.5,
                         ),
                       ),
-                    )),
-                    // Time filter
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.blue[100],
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.blue[300]!),
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 8,
+                    children: [
+                      // Ingredients
+                      ...widget.searchedIngredients.map((ingredient) => PeacefulFilterChip(
+                        label: ingredient,
+                        isSelected: true,
+                        icon: Icons.local_dining_outlined,
+                      )),
+                      // Time filter
+                      PeacefulFilterChip(
+                        label: _getTimeFilterText(widget.maxTimeMinutes),
+                        isSelected: true,
+                        icon: Icons.access_time_outlined,
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: ThemeProvider.softTeal.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: ThemeProvider.softTeal.withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(
+                      'Found ${widget.recipes.length} recipe${widget.recipes.length == 1 ? '' : 's'}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: ThemeProvider.deepSlate,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            SizedBox(height: 20),
+            
+            // Results List
+            Expanded(
+              child: widget.recipes.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.access_time, size: 12, color: Colors.blue[700]),
-                          SizedBox(width: 4),
-                          Text(
-                            _getTimeFilterText(widget.maxTimeMinutes),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.blue[700],
-                              fontWeight: FontWeight.w500,
+                          Container(
+                            margin: EdgeInsets.symmetric(horizontal: 20),
+                            padding: EdgeInsets.all(32),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(24),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.2),
+                                width: 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.08),
+                                  blurRadius: 20,
+                                  spreadRadius: 0,
+                                  offset: Offset(0, 8),
+                                ),
+                                BoxShadow(
+                                  color: Colors.white.withOpacity(0.1),
+                                  blurRadius: 20,
+                                  spreadRadius: 0,
+                                  offset: Offset(0, -4),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.restaurant_menu_outlined,
+                                  size: 64,
+                                  color: ThemeProvider.softTeal,
+                                ),
+                                SizedBox(height: 20),
+                                Text(
+                                  'No recipes found',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: ThemeProvider.deepSlate,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                                SizedBox(height: 12),
+                                Text(
+                                  'Try different ingredients or increase the time limit',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: ThemeProvider.softGray,
+                                    letterSpacing: 0.3,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(height: 24),
+                                PeacefulButton(
+                                  text: 'Search Again',
+                                  icon: Icons.search_outlined,
+                                  onPressed: () => Navigator.pop(context),
+                                  width: 200,
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'Found ${widget.recipes.length} recipe${widget.recipes.length == 1 ? '' : 's'}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Results List
-          Expanded(
-            child: widget.recipes.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.no_meals,
-                          size: 64,
-                          color: Colors.grey[400],
-                        ),
-                        SizedBox(height: 16),
-                        Text(
-                          'No recipes found',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Try different ingredients or increase the time limit',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[500],
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 24),
-                        ElevatedButton(
-                          onPressed: () => Navigator.pop(context),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange[600],
-                            foregroundColor: Colors.white,
-                          ),
-                          child: Text('Search Again'),
-                        ),
-                      ],
-                    ),
-                  )
-                : ListView.builder(
-                    padding: EdgeInsets.all(16),
-                    itemCount: widget.recipes.length,
-                    itemBuilder: (context, index) {
-                      final recipe = widget.recipes[index];
-                      return Card(
-                        margin: EdgeInsets.only(bottom: 12),
-                        elevation: 2,
-                        child: ListTile(
-                          contentPadding: EdgeInsets.all(12),
-                          leading: Container(
-                            width: 60,
-                            height: 60,
-                            decoration: BoxDecoration(
-                              color: Colors.orange[100],
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: recipe['image'] != null && recipe['image'].toString().isNotEmpty
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Image.network(
-                                      recipe['image'],
-                                      width: 60,
-                                      height: 60,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return Icon(
-                                          Icons.restaurant,
-                                          color: Colors.orange[600],
-                                        );
-                                      },
-                                    ),
-                                  )
-                                : Icon(
-                                    Icons.restaurant,
-                                    color: Colors.orange[600],
-                                  ),
-                          ),
-                          title: Text(
-                            recipe['title'] ?? 'Recipe Title',
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (recipe['cookingTime'] != null)
-                                Text('Cooking time: ${recipe['cookingTime']} minutes'),
-                              if (recipe['matchScore'] != null && recipe['matchPercentage'] != null)
-                                Container(
-                                  margin: EdgeInsets.only(top: 4),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.check_circle,
-                                        size: 16,
-                                        color: recipe['matchPercentage'] >= 80 
-                                            ? Colors.green 
-                                            : recipe['matchPercentage'] >= 50 
-                                                ? Colors.orange 
-                                                : Colors.grey,
-                                      ),
-                                      SizedBox(width: 4),
-                                      Text(
-                                        '${recipe['matchScore']}/${widget.searchedIngredients.length} ingredients (${recipe['matchPercentage']}%)',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey[600],
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              if (recipe['category'] != null || recipe['area'] != null)
-                                Container(
-                                  margin: EdgeInsets.only(top: 4),
-                                  child: Text(
-                                    [recipe['category'], recipe['area']].where((e) => e != null).join(' • '),
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[500],
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              // Favorite button
-                              IconButton(
-                                icon: _togglingFavorites[recipe['id'].toString()] == true
-                                    ? SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          valueColor: AlwaysStoppedAnimation<Color>(Colors.orange[600]!),
-                                        ),
-                                      )
-                                    : Icon(
-                                        _favoriteStatus[recipe['id'].toString()] == true 
-                                            ? Icons.favorite 
-                                            : Icons.favorite_border,
-                                        color: _favoriteStatus[recipe['id'].toString()] == true 
-                                            ? Colors.red 
-                                            : Colors.grey[600],
-                                      ),
-                                onPressed: _togglingFavorites[recipe['id'].toString()] == true 
-                                    ? null 
-                                    : () => _toggleFavorite(recipe['id'].toString(), recipe),
-                                tooltip: _favoriteStatus[recipe['id'].toString()] == true 
-                                    ? 'Remove from favorites' 
-                                    : 'Add to favorites',
-                              ),
-                              Icon(Icons.arrow_forward_ios, size: 16),
-                            ],
-                          ),
+                    )
+                  : ListView.builder(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      itemCount: widget.recipes.length,
+                      itemBuilder: (context, index) {
+                        final recipe = widget.recipes[index];
+                        return PeacefulRecipeCard(
+                          recipe: recipe,
+                          index: index,
+                          isFavorite: _favoriteStatus[recipe['id'].toString()] == true,
+                          isTogglingFavorite: _togglingFavorites[recipe['id'].toString()] == true,
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) => RecipeDetailScreen(recipe: recipe),
+                              PeacefulRouteTransitions.fadeSlideTransition(
+                                RecipeDetailScreen(recipe: recipe),
                               ),
                             );
                           },
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ],
+                          onFavorite: () => _toggleFavorite(recipe['id'].toString(), recipe),
+                        );
+                      },
+                    ),
+            ),
+            
+            SizedBox(height: 20),
+          ],
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.pop(context),
-        backgroundColor: Colors.orange[600],
-        child: Icon(Icons.search, color: Colors.white),
-        tooltip: 'New Search',
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: ThemeProvider.softTeal.withOpacity(0.3),
+              blurRadius: 20,
+              spreadRadius: 0,
+              offset: Offset(0, 8),
+            ),
+            BoxShadow(
+              color: Colors.white.withOpacity(0.1),
+              blurRadius: 20,
+              spreadRadius: 0,
+              offset: Offset(0, -4),
+            ),
+          ],
+        ),
+        child: FloatingActionButton(
+          onPressed: () => Navigator.pop(context),
+          backgroundColor: ThemeProvider.softTeal,
+          foregroundColor: ThemeProvider.whisperWhite,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Icon(Icons.search_outlined, size: 24),
+          tooltip: 'New Search',
+        ),
       ),
     );
   }

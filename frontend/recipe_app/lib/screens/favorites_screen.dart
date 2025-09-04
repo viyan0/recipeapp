@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/favorites_service.dart';
 import '../services/auth_service.dart';
+import '../providers/theme_provider.dart';
 import 'recipe_detail_screen.dart';
 
 class FavoritesScreen extends StatefulWidget {
@@ -78,7 +79,7 @@ class FavoritesScreenState extends State<FavoritesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('My Favorites'),
-        backgroundColor: Colors.orange[600],
+        backgroundColor: ThemeProvider.enchantedEmerald,
         foregroundColor: Colors.white,
         automaticallyImplyLeading: false,
         actions: [
@@ -158,7 +159,7 @@ class FavoritesScreenState extends State<FavoritesScreen> {
                               Navigator.pushReplacementNamed(context, '/main');
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange[600],
+                              backgroundColor: ThemeProvider.enchantedEmerald,
                               foregroundColor: Colors.white,
                             ),
                             child: Text('Find Recipes'),
@@ -196,14 +197,14 @@ class FavoritesScreenState extends State<FavoritesScreen> {
                                           errorBuilder: (context, error, stackTrace) {
                                             return Icon(
                                               Icons.restaurant,
-                                              color: Colors.orange[600],
+                                              color: ThemeProvider.enchantedEmerald,
                                             );
                                           },
                                         ),
                                       )
                                     : Icon(
                                         Icons.restaurant,
-                                        color: Colors.orange[600],
+                                        color: ThemeProvider.enchantedEmerald,
                                       ),
                               ),
                               title: Text(

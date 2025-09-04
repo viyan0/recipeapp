@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/connection_test.dart';
+import '../providers/theme_provider.dart';
 
 class ConnectionTestScreen extends StatefulWidget {
   const ConnectionTestScreen({Key? key}) : super(key: key);
@@ -174,7 +175,7 @@ class _ConnectionTestScreenState extends State<ConnectionTestScreen> {
             ElevatedButton(
               onPressed: _isLoading ? null : _testRecipeEndpoint,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
+                backgroundColor: ThemeProvider.enchantedEmerald,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.all(16),
               ),

@@ -24,7 +24,7 @@ class RecipeApp extends StatelessWidget {
             title: 'Recipe App',
             theme: themeProvider.lightTheme,
             darkTheme: themeProvider.darkTheme,
-            themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+            themeMode: ThemeMode.light, // Use our beautiful peaceful greenish theme
             home: WelcomeScreen(),
             routes: {
               '/welcome': (context) => WelcomeScreen(),

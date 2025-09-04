@@ -1,93 +1,184 @@
 import 'package:flutter/material.dart';
+import '../widgets/peaceful_background.dart';
+import '../widgets/peaceful_button.dart';
+import '../widgets/peaceful_transitions.dart';
+import '../providers/theme_provider.dart';
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
+  @override
+  _WelcomeScreenState createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends State<WelcomeScreen>
+    with TickerProviderStateMixin {
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      duration: Duration(seconds: 3),
+      vsync: this,
+    );
+
+    _pulseAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.08,
+    ).animate(CurvedAnimation(
+      parent: _pulseController,
+      curve: Curves.easeInOut,
+    ));
+
+    _pulseController.repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // App icon/logo placeholder
-              Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  color: Colors.orange[100],
-                  borderRadius: BorderRadius.circular(60),
-                ),
-                child: Icon(
-                  Icons.restaurant,
-                  size: 60,
-                  color: Colors.orange[600],
-                ),
+      body: PeacefulBackground(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height - 
+                  MediaQuery.of(context).padding.top - 
+                  MediaQuery.of(context).padding.bottom,
               ),
-              SizedBox(height: 40),
-              
-              // Welcome message
-              Text(
-                'Oh, let\'s make delicious food!',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[800],
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 16),
-              
-              Text(
-                'Discover amazing recipes based on what you have',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 60),
-              
-              // Sign up button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/auth', arguments: {'mode': 'signup'});
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                // Beautiful app icon with animation
+                AnimatedBuilder(
+                  animation: _pulseAnimation,
+                  builder: (context, child) {
+                    return Transform.scale(
+                      scale: _pulseAnimation.value,
+                      child: Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          gradient: RadialGradient(
+                            colors: [
+                              ThemeProvider.enchantedEmerald,
+                              ThemeProvider.mysticJade,
+                              ThemeProvider.forestWhisper,
+                            ],
+                            stops: [0.0, 0.7, 1.0],
+                          ),
+                          borderRadius: BorderRadius.circular(60),
+                          boxShadow: [
+                            BoxShadow(
+                              color: ThemeProvider.enchantedEmerald.withOpacity(0.4),
+                              blurRadius: 30,
+                              spreadRadius: 0,
+                              offset: Offset(0, 15),
+                            ),
+                            BoxShadow(
+                              color: ThemeProvider.mysticJade.withOpacity(0.2),
+                              blurRadius: 60,
+                              spreadRadius: 0,
+                              offset: Offset(0, 25),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.restaurant_menu_rounded,
+                          size: 60,
+                          color: ThemeProvider.whisperWhite,
+                        ),
+                      ),
+                    );
                   },
-                  child: Text(
-                    'Sign Up',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                ),
+                SizedBox(height: 30),
+                
+                // Beautiful welcome message
+                FrostedGlassCard(
+                  padding: EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Oh, let\'s make delicious food!',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w800,
+                          color: ThemeProvider.emeraldText,
+                          letterSpacing: 1.2,
+                          height: 1.2,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 20),
+                      
+                      Text(
+                        'Discover amazing recipes based on what you have in your kitchen',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: ThemeProvider.sageDark,
+                          letterSpacing: 0.5,
+                          height: 1.4,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              SizedBox(height: 16),
-              
-              // Login button
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/auth', arguments: {'mode': 'login'});
-                  },
-                  style: OutlinedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                    side: BorderSide(color: Colors.orange[600]!),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                SizedBox(height: 40),
+                
+                // Beautiful buttons
+                Column(
+                  children: [
+                    PeacefulButton(
+                      text: 'Start Your Culinary Journey',
+                      icon: Icons.restaurant_rounded,
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/auth', arguments: {'mode': 'signup'});
+                      },
+                      width: double.infinity,
+                      height: 64,
+                      backgroundColor: ThemeProvider.enchantedEmerald,
                     ),
-                  ),
-                  child: Text(
-                    'Log In',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.orange[600],
+                    SizedBox(height: 20),
+                    
+                    PeacefulButton(
+                      text: 'Welcome Back, Chef!',
+                      icon: Icons.login_rounded,
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/auth', arguments: {'mode': 'login'});
+                      },
+                      width: double.infinity,
+                      height: 64,
+                      backgroundColor: ThemeProvider.peacefulSage,
+                      isOutlined: false,
                     ),
+                  ],
+                ),
+                SizedBox(height: 30),
+                
+                // Subtle footer
+                Text(
+                  '✨ Let\'s create magic in your kitchen ✨',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: ThemeProvider.peacefulSage,
+                    letterSpacing: 0.8,
+                    fontStyle: FontStyle.italic,
                   ),
+                  textAlign: TextAlign.center,
+                ),
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),

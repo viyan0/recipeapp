@@ -4,6 +4,7 @@ import '../services/auth_service.dart';
 import 'recipe_results_screen.dart';
 import '../models/user.dart';
 import '../config/app_config.dart';
+import '../providers/theme_provider.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -220,9 +221,9 @@ class _SearchScreenState extends State<SearchScreen> {
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
-                            color: isSelected ? Colors.orange[600] : Colors.white,
+                            color: isSelected ? ThemeProvider.enchantedEmerald : Colors.white,
                             border: Border.all(
-                              color: isSelected ? Colors.orange[600]! : Colors.grey[300]!,
+                              color: isSelected ? ThemeProvider.enchantedEmerald : Colors.grey[300]!,
                             ),
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -311,7 +312,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.favorite_outline, color: Colors.orange[600], size: 18),
+                      Icon(Icons.favorite_outline, color: ThemeProvider.enchantedEmerald, size: 18),
                       SizedBox(width: 4),
                       Expanded(
                         child: Text(
@@ -389,17 +390,17 @@ class _SearchScreenState extends State<SearchScreen> {
                                   child: Container(
                                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                     decoration: BoxDecoration(
-                                      color: isSelected ? Colors.orange[100] : Colors.white,
+                                      color: isSelected ? ThemeProvider.whisperGreen.withOpacity(0.3) : Colors.white,
                                       borderRadius: BorderRadius.circular(16),
                                       border: Border.all(
-                                        color: isSelected ? Colors.orange[400]! : Colors.grey[300]!,
+                                        color: isSelected ? ThemeProvider.peacefulSage : Colors.grey[300]!,
                                         width: isSelected ? 1.5 : 1,
                                       ),
                                     ),
                                     child: Text(
                                       ingredient,
                                       style: TextStyle(
-                                        color: isSelected ? Colors.orange[700] : Colors.grey[600],
+                                        color: isSelected ? ThemeProvider.emeraldText : Colors.grey[600],
                                         fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
                                         fontSize: 13,
                                       ),

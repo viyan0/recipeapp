@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../models/user.dart';
 import '../config/app_config.dart';
+import '../widgets/peaceful_background.dart';
+import '../widgets/peaceful_button.dart';
+import '../providers/theme_provider.dart';
 import 'otp_verification_screen.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -78,8 +81,8 @@ class _AuthScreenState extends State<AuthScreen> {
                     Container(
                       padding: EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.orange[50],
-                        border: Border.all(color: Colors.orange[200]!),
+                        color: ThemeProvider.whisperGreen.withOpacity(0.3),
+                        border: Border.all(color: ThemeProvider.peacefulSage),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -88,7 +91,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 4,
-                          color: Colors.orange[800],
+                          color: ThemeProvider.emeraldText,
                         ),
                       ),
                     ),
@@ -163,249 +166,405 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_isSignUp ? 'Sign Up' : 'Log In'),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: _formKey,
+      body: PeacefulBackground(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Header
-                Text(
-                  _isSignUp ? 'Create Your Account' : 'Welcome Back',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 8),
-                Text(
-                  _isSignUp 
-                    ? 'Join us to discover amazing recipes'
-                    : 'Sign in to continue cooking',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 32),
-
-                // Username field (only for signup)
-                if (_isSignUp) ...[
-                  TextFormField(
-                    controller: _usernameController,
-                    decoration: InputDecoration(
-                      labelText: 'Username',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      prefixIcon: Icon(Icons.person),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please enter a username';
-                      }
-                      if (value.trim().length < AppConfig.minUsernameLength) {
-                        return 'Username must be at least ${AppConfig.minUsernameLength} characters';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16),
-                ],
-
-                // Email field
-                TextFormField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    prefixIcon: Icon(Icons.email),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                      return 'Please enter a valid email';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16),
-
-                // Password field
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    prefixIcon: Icon(Icons.lock),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
-                    }
-                    if (_isSignUp && value.length < AppConfig.minPasswordLength) {
-                      return 'Password must be at least ${AppConfig.minPasswordLength} characters';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 24),
-
-                // Dietary preference (only for signup)
-                if (_isSignUp) ...[
-                  Text(
-                    'Dietary Preference',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                  SizedBox(height: 12),
-                  Row(
+                // Beautiful header section
+                Container(
+                  margin: EdgeInsets.only(top: 20, bottom: 40),
+                  child: Row(
                     children: [
+                      PeacefulIconButton(
+                        icon: Icons.arrow_back_ios_rounded,
+                        onPressed: () => Navigator.pop(context),
+                        size: 20,
+                        color: ThemeProvider.emeraldText,
+                        backgroundColor: ThemeProvider.cottonCloud.withOpacity(0.3),
+                      ),
                       Expanded(
-                        child: GestureDetector(
-                          onTap: () => setState(() => _isVegetarian = true),
-                          child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: _isVegetarian ? Colors.orange[100] : Colors.grey[100],
-                              border: Border.all(
-                                color: _isVegetarian ? Colors.orange[600]! : Colors.grey[300]!,
-                                width: 2,
-                              ),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.eco,
-                                  color: _isVegetarian ? Colors.orange[600] : Colors.grey[600],
-                                ),
-                                SizedBox(width: 8),
-                                Text(
-                                  'Vegetarian',
-                                  style: TextStyle(
-                                    color: _isVegetarian ? Colors.orange[600] : Colors.grey[600],
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
+                        child: Text(
+                          _isSignUp ? 'Create Account' : 'Welcome Back',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            color: ThemeProvider.emeraldText,
+                            letterSpacing: 0.8,
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => setState(() => _isVegetarian = false),
-                          child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: !_isVegetarian ? Colors.orange[100] : Colors.grey[100],
-                              border: Border.all(
-                                color: !_isVegetarian ? Colors.orange[600]! : Colors.grey[300]!,
-                                width: 2,
-                              ),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.restaurant,
-                                  color: !_isVegetarian ? Colors.orange[600] : Colors.grey[600],
-                                ),
-                                SizedBox(width: 8),
-                                Text(
-                                  'Non-Vegetarian',
-                                  style: TextStyle(
-                                    color: !_isVegetarian ? Colors.orange[600] : Colors.grey[600],
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
+                      SizedBox(width: 44), // Balance the back button
                     ],
                   ),
-                  SizedBox(height: 24),
-                ],
-
-                // Error message
-                if (_errorMessage.isNotEmpty)
-                  Container(
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.red[50],
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.red[200]!),
-                    ),
-                    child: Text(
-                      _errorMessage,
-                      style: TextStyle(color: Colors.red[700]),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-
-                if (_errorMessage.isNotEmpty) SizedBox(height: 16),
-
-                // Submit button
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _submitForm,
-                  child: _isLoading
-                    ? SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
-                      )
-                    : Text(
-                        _isSignUp ? 'Sign Up' : 'Log In',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                      ),
                 ),
-                SizedBox(height: 16),
 
-                // Toggle between login/signup
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _isSignUp = !_isSignUp;
-                      _errorMessage = '';
-                      _emailController.clear();
-                      _usernameController.clear();
-                      _passwordController.clear();
-                    });
-                  },
-                  child: Text(
-                    _isSignUp 
-                      ? 'Already have an account? Log In'
-                      : 'Don\'t have an account? Sign Up',
-                    style: TextStyle(color: Colors.orange[600]),
+                // Main form card
+                FrostedGlassCard(
+                  padding: EdgeInsets.all(32),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Header text
+                        Text(
+                          _isSignUp 
+                            ? 'Join our culinary community'
+                            : 'Continue your cooking journey',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: ThemeProvider.sageDark,
+                            letterSpacing: 0.5,
+                            height: 1.4,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 40),
+
+                        // Username field (only for signup)
+                        if (_isSignUp) ...[
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: ThemeProvider.enchantedEmerald.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: TextFormField(
+                              controller: _usernameController,
+                              style: TextStyle(
+                                color: ThemeProvider.emeraldText,
+                                fontSize: 16,
+                                letterSpacing: 0.3,
+                              ),
+                              decoration: InputDecoration(
+                                labelText: 'Username',
+                                labelStyle: TextStyle(
+                                  color: ThemeProvider.peacefulSage,
+                                  fontSize: 16,
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.person_outline_rounded,
+                                  color: ThemeProvider.enchantedEmerald,
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Please enter a username';
+                                }
+                                if (value.trim().length < AppConfig.minUsernameLength) {
+                                  return 'Username must be at least ${AppConfig.minUsernameLength} characters';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 24),
+                        ],
+
+                        // Email field
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: ThemeProvider.enchantedEmerald.withOpacity(0.1),
+                                blurRadius: 10,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: TextFormField(
+                            controller: _emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            style: TextStyle(
+                              color: ThemeProvider.emeraldText,
+                              fontSize: 16,
+                              letterSpacing: 0.3,
+                            ),
+                            decoration: InputDecoration(
+                              labelText: 'Email',
+                              labelStyle: TextStyle(
+                                color: ThemeProvider.peacefulSage,
+                                fontSize: 16,
+                              ),
+                              prefixIcon: Icon(
+                                Icons.email_outlined,
+                                color: ThemeProvider.enchantedEmerald,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Please enter your email';
+                              }
+                              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                                return 'Please enter a valid email';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        SizedBox(height: 24),
+
+                        // Password field
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: ThemeProvider.enchantedEmerald.withOpacity(0.1),
+                                blurRadius: 10,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: TextFormField(
+                            controller: _passwordController,
+                            obscureText: true,
+                            style: TextStyle(
+                              color: ThemeProvider.emeraldText,
+                              fontSize: 16,
+                              letterSpacing: 0.3,
+                            ),
+                            decoration: InputDecoration(
+                              labelText: 'Password',
+                              labelStyle: TextStyle(
+                                color: ThemeProvider.peacefulSage,
+                                fontSize: 16,
+                              ),
+                              prefixIcon: Icon(
+                                Icons.lock_outline_rounded,
+                                color: ThemeProvider.enchantedEmerald,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your password';
+                              }
+                              if (_isSignUp && value.length < AppConfig.minPasswordLength) {
+                                return 'Password must be at least ${AppConfig.minPasswordLength} characters';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        SizedBox(height: 32),
+
+                        // Dietary preference (only for signup)
+                        if (_isSignUp) ...[
+                          Text(
+                            'Dietary Preference',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: ThemeProvider.emeraldText,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () => setState(() => _isVegetarian = true),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                                    decoration: BoxDecoration(
+                                      gradient: _isVegetarian 
+                                          ? LinearGradient(
+                                              colors: [
+                                                ThemeProvider.enchantedEmerald.withOpacity(0.2),
+                                                ThemeProvider.mysticJade.withOpacity(0.1),
+                                              ],
+                                            )
+                                          : null,
+                                      color: _isVegetarian ? null : ThemeProvider.cottonCloud.withOpacity(0.5),
+                                      border: Border.all(
+                                        color: _isVegetarian ? ThemeProvider.enchantedEmerald : ThemeProvider.peacefulSage,
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(20),
+                                      boxShadow: _isVegetarian ? [
+                                        BoxShadow(
+                                          color: ThemeProvider.enchantedEmerald.withOpacity(0.2),
+                                          blurRadius: 15,
+                                          offset: Offset(0, 8),
+                                        ),
+                                      ] : [],
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Icon(
+                                          Icons.eco_rounded,
+                                          color: _isVegetarian ? ThemeProvider.enchantedEmerald : ThemeProvider.peacefulSage,
+                                          size: 28,
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          'Vegetarian',
+                                          style: TextStyle(
+                                            color: _isVegetarian ? ThemeProvider.emeraldText : ThemeProvider.sageDark,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                            letterSpacing: 0.3,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 16),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () => setState(() => _isVegetarian = false),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                                    decoration: BoxDecoration(
+                                      gradient: !_isVegetarian 
+                                          ? LinearGradient(
+                                              colors: [
+                                                ThemeProvider.enchantedEmerald.withOpacity(0.2),
+                                                ThemeProvider.mysticJade.withOpacity(0.1),
+                                              ],
+                                            )
+                                          : null,
+                                      color: !_isVegetarian ? null : ThemeProvider.cottonCloud.withOpacity(0.5),
+                                      border: Border.all(
+                                        color: !_isVegetarian ? ThemeProvider.enchantedEmerald : ThemeProvider.peacefulSage,
+                                        width: 2,
+                                      ),
+                                      borderRadius: BorderRadius.circular(20),
+                                      boxShadow: !_isVegetarian ? [
+                                        BoxShadow(
+                                          color: ThemeProvider.enchantedEmerald.withOpacity(0.2),
+                                          blurRadius: 15,
+                                          offset: Offset(0, 8),
+                                        ),
+                                      ] : [],
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Icon(
+                                          Icons.restaurant_menu_rounded,
+                                          color: !_isVegetarian ? ThemeProvider.enchantedEmerald : ThemeProvider.peacefulSage,
+                                          size: 28,
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          'Non-Vegetarian',
+                                          style: TextStyle(
+                                            color: !_isVegetarian ? ThemeProvider.emeraldText : ThemeProvider.sageDark,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                            letterSpacing: 0.3,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 32),
+                        ],
+
+                        // Error message
+                        if (_errorMessage.isNotEmpty) ...[
+                          Container(
+                            padding: EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.red[50]!.withOpacity(0.8),
+                                  Colors.red[25]!.withOpacity(0.6),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: Colors.red[300]!, width: 1),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.red.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.error_outline_rounded,
+                                  color: Colors.red[600],
+                                  size: 20,
+                                ),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    _errorMessage,
+                                    style: TextStyle(
+                                      color: Colors.red[700],
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 24),
+                        ],
+
+                        // Submit button
+                        PeacefulButton(
+                          text: _isSignUp ? 'Create Account' : 'Sign In',
+                          icon: _isSignUp ? Icons.person_add_rounded : Icons.login_rounded,
+                          onPressed: _isLoading ? null : _submitForm,
+                          isLoading: _isLoading,
+                          width: double.infinity,
+                          height: 64,
+                          backgroundColor: ThemeProvider.enchantedEmerald,
+                        ),
+                        SizedBox(height: 24),
+
+                        // Toggle between login/signup
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _isSignUp = !_isSignUp;
+                              _errorMessage = '';
+                              _emailController.clear();
+                              _usernameController.clear();
+                              _passwordController.clear();
+                            });
+                          },
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: Text(
+                            _isSignUp 
+                                ? 'Already have an account? Sign In'
+                                : 'Don\'t have an account? Create One',
+                            style: TextStyle(
+                              color: ThemeProvider.enchantedEmerald,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

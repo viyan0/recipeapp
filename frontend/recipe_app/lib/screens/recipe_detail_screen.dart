@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/recipe_service.dart';
 import '../services/favorites_service.dart';
+import '../providers/theme_provider.dart';
 
 class RecipeDetailScreen extends StatefulWidget {
   final Map<String, dynamic> recipe;
@@ -115,7 +116,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           recipe['title'] ?? recipe['strMeal'] ?? 'Recipe Details',
           style: TextStyle(fontSize: 18),
         ),
-        backgroundColor: Colors.orange[600],
+        backgroundColor: ThemeProvider.enchantedEmerald,
         foregroundColor: Colors.white,
         actions: [
           IconButton(
@@ -195,7 +196,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                                   child: Icon(
                                     Icons.restaurant,
                                     size: 80,
-                                    color: Colors.orange[600],
+                                    color: ThemeProvider.enchantedEmerald,
                                   ),
                                 );
                               },
@@ -410,7 +411,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   height: 8,
                   margin: EdgeInsets.only(top: 6, right: 12),
                   decoration: BoxDecoration(
-                    color: Colors.orange[600],
+                    color: ThemeProvider.enchantedEmerald,
                     shape: BoxShape.circle,
                   ),
                 ),
