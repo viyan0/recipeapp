@@ -46,9 +46,25 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_selectedIndex == 0 ? 'Find Recipes' : 'My Favorites'),
-        backgroundColor: ThemeProvider.enchantedEmerald,
+        backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
         automaticallyImplyLeading: false,
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            color: ThemeProvider.darkGrey,
+            border: Border(
+              bottom: BorderSide(color: ThemeProvider.goldPrimary, width: 1.5),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: ThemeProvider.goldPrimary.withOpacity(0.25),
+                blurRadius: 12,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+        ),
         actions: [
           if (_selectedIndex == 0) // Show favorites button on search tab
             IconButton(

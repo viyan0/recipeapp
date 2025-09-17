@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+.pub-cache/
+.pub/
+
+# Build outputs
+build/
+dist/
+*.log
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Flutter specific
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+/build/
+
+# Android Studio
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Symbolication
+app.*.symbols
+app.*.map.json
+
+# Temporary files
+*.tmp
+*.temp

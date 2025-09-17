@@ -181,8 +181,8 @@ class _AuthScreenState extends State<AuthScreen> {
                         icon: Icons.arrow_back_ios_rounded,
                         onPressed: () => Navigator.pop(context),
                         size: 20,
-                        color: ThemeProvider.emeraldText,
-                        backgroundColor: ThemeProvider.cottonCloud.withOpacity(0.3),
+                        color: Colors.white,
+                        backgroundColor: Colors.white.withOpacity(0.08),
                       ),
                       Expanded(
                         child: Text(
@@ -190,7 +190,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w700,
-                            color: ThemeProvider.emeraldText,
+                            color: Colors.white,
                             letterSpacing: 0.8,
                           ),
                           textAlign: TextAlign.center,
@@ -204,6 +204,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 // Main form card
                 FrostedGlassCard(
                   padding: EdgeInsets.all(32),
+                  backgroundColor: ThemeProvider.midGrey,
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -216,7 +217,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             : 'Continue your cooking journey',
                           style: TextStyle(
                             fontSize: 18,
-                            color: ThemeProvider.sageDark,
+                            color: Colors.white,
                             letterSpacing: 0.5,
                             height: 1.4,
                           ),
@@ -240,20 +241,14 @@ class _AuthScreenState extends State<AuthScreen> {
                             child: TextFormField(
                               controller: _usernameController,
                               style: TextStyle(
-                                color: ThemeProvider.emeraldText,
+                                color: Colors.white,
                                 fontSize: 16,
                                 letterSpacing: 0.3,
                               ),
                               decoration: InputDecoration(
                                 labelText: 'Username',
-                                labelStyle: TextStyle(
-                                  color: ThemeProvider.peacefulSage,
-                                  fontSize: 16,
-                                ),
-                                prefixIcon: Icon(
-                                  Icons.person_outline_rounded,
-                                  color: ThemeProvider.enchantedEmerald,
-                                ),
+                                labelStyle: TextStyle(color: Colors.white70, fontSize: 16),
+                                prefixIcon: Icon(Icons.person_outline_rounded, color: Colors.white),
                               ),
                               validator: (value) {
                                 if (value == null || value.trim().isEmpty) {
@@ -285,20 +280,14 @@ class _AuthScreenState extends State<AuthScreen> {
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
                             style: TextStyle(
-                              color: ThemeProvider.emeraldText,
+                              color: Colors.white,
                               fontSize: 16,
                               letterSpacing: 0.3,
                             ),
                             decoration: InputDecoration(
                               labelText: 'Email',
-                              labelStyle: TextStyle(
-                                color: ThemeProvider.peacefulSage,
-                                fontSize: 16,
-                              ),
-                              prefixIcon: Icon(
-                                Icons.email_outlined,
-                                color: ThemeProvider.enchantedEmerald,
-                              ),
+                              labelStyle: TextStyle(color: Colors.white70, fontSize: 16),
+                              prefixIcon: Icon(Icons.email_outlined, color: Colors.white),
                             ),
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
@@ -329,20 +318,14 @@ class _AuthScreenState extends State<AuthScreen> {
                             controller: _passwordController,
                             obscureText: true,
                             style: TextStyle(
-                              color: ThemeProvider.emeraldText,
+                              color: Colors.white,
                               fontSize: 16,
                               letterSpacing: 0.3,
                             ),
                             decoration: InputDecoration(
                               labelText: 'Password',
-                              labelStyle: TextStyle(
-                                color: ThemeProvider.peacefulSage,
-                                fontSize: 16,
-                              ),
-                              prefixIcon: Icon(
-                                Icons.lock_outline_rounded,
-                                color: ThemeProvider.enchantedEmerald,
-                              ),
+                              labelStyle: TextStyle(color: Colors.white70, fontSize: 16),
+                              prefixIcon: Icon(Icons.lock_outline_rounded, color: Colors.white),
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -364,7 +347,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
-                              color: ThemeProvider.emeraldText,
+                              color: Colors.white,
                               letterSpacing: 0.5,
                             ),
                           ),
@@ -377,40 +360,26 @@ class _AuthScreenState extends State<AuthScreen> {
                                   child: Container(
                                     padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
                                     decoration: BoxDecoration(
-                                      gradient: _isVegetarian 
-                                          ? LinearGradient(
-                                              colors: [
-                                                ThemeProvider.enchantedEmerald.withOpacity(0.2),
-                                                ThemeProvider.mysticJade.withOpacity(0.1),
-                                              ],
-                                            )
-                                          : null,
-                                      color: _isVegetarian ? null : ThemeProvider.cottonCloud.withOpacity(0.5),
-                                      border: Border.all(
-                                        color: _isVegetarian ? ThemeProvider.enchantedEmerald : ThemeProvider.peacefulSage,
-                                        width: 2,
-                                      ),
+                                      color: Colors.black,
+                                      border: Border.all(color: ThemeProvider.goldPrimary, width: 1.5),
                                       borderRadius: BorderRadius.circular(20),
-                                      boxShadow: _isVegetarian ? [
-                                        BoxShadow(
-                                          color: ThemeProvider.enchantedEmerald.withOpacity(0.2),
-                                          blurRadius: 15,
-                                          offset: Offset(0, 8),
-                                        ),
-                                      ] : [],
+                                      boxShadow: [
+                                        if (_isVegetarian)
+                                          BoxShadow(color: ThemeProvider.goldPrimary.withOpacity(0.25), blurRadius: 12, offset: Offset(0, 4)),
+                                      ],
                                     ),
                                     child: Column(
                                       children: [
                                         Icon(
                                           Icons.eco_rounded,
-                                          color: _isVegetarian ? ThemeProvider.enchantedEmerald : ThemeProvider.peacefulSage,
+                                          color: ThemeProvider.goldLight,
                                           size: 28,
                                         ),
                                         SizedBox(height: 8),
                                         Text(
                                           'Vegetarian',
                                           style: TextStyle(
-                                            color: _isVegetarian ? ThemeProvider.emeraldText : ThemeProvider.sageDark,
+                                            color: Colors.white,
                                             fontWeight: FontWeight.w600,
                                             fontSize: 16,
                                             letterSpacing: 0.3,
@@ -428,40 +397,26 @@ class _AuthScreenState extends State<AuthScreen> {
                                   child: Container(
                                     padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
                                     decoration: BoxDecoration(
-                                      gradient: !_isVegetarian 
-                                          ? LinearGradient(
-                                              colors: [
-                                                ThemeProvider.enchantedEmerald.withOpacity(0.2),
-                                                ThemeProvider.mysticJade.withOpacity(0.1),
-                                              ],
-                                            )
-                                          : null,
-                                      color: !_isVegetarian ? null : ThemeProvider.cottonCloud.withOpacity(0.5),
-                                      border: Border.all(
-                                        color: !_isVegetarian ? ThemeProvider.enchantedEmerald : ThemeProvider.peacefulSage,
-                                        width: 2,
-                                      ),
+                                      color: Colors.black,
+                                      border: Border.all(color: ThemeProvider.goldPrimary, width: 1.5),
                                       borderRadius: BorderRadius.circular(20),
-                                      boxShadow: !_isVegetarian ? [
-                                        BoxShadow(
-                                          color: ThemeProvider.enchantedEmerald.withOpacity(0.2),
-                                          blurRadius: 15,
-                                          offset: Offset(0, 8),
-                                        ),
-                                      ] : [],
+                                      boxShadow: [
+                                        if (!_isVegetarian)
+                                          BoxShadow(color: ThemeProvider.goldPrimary.withOpacity(0.25), blurRadius: 12, offset: Offset(0, 4)),
+                                      ],
                                     ),
                                     child: Column(
                                       children: [
                                         Icon(
                                           Icons.restaurant_menu_rounded,
-                                          color: !_isVegetarian ? ThemeProvider.enchantedEmerald : ThemeProvider.peacefulSage,
+                                          color: ThemeProvider.goldLight,
                                           size: 28,
                                         ),
                                         SizedBox(height: 8),
                                         Text(
                                           'Non-Vegetarian',
                                           style: TextStyle(
-                                            color: !_isVegetarian ? ThemeProvider.emeraldText : ThemeProvider.sageDark,
+                                            color: Colors.white,
                                             fontWeight: FontWeight.w600,
                                             fontSize: 16,
                                             letterSpacing: 0.3,
@@ -530,7 +485,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           isLoading: _isLoading,
                           width: double.infinity,
                           height: 64,
-                          backgroundColor: ThemeProvider.enchantedEmerald,
+                          backgroundColor: Colors.black,
                         ),
                         SizedBox(height: 24),
 
@@ -556,7 +511,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                 ? 'Already have an account? Sign In'
                                 : 'Don\'t have an account? Create One',
                             style: TextStyle(
-                              color: ThemeProvider.enchantedEmerald,
+                              color: Colors.black,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.3,

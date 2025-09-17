@@ -265,16 +265,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Settings'),
-        backgroundColor: ThemeProvider.enchantedEmerald,
+        backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
         elevation: 0,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            color: ThemeProvider.darkGrey,
+            border: Border(
+              bottom: BorderSide(color: ThemeProvider.goldPrimary, width: 1.5),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: ThemeProvider.goldPrimary.withOpacity(0.25),
+                blurRadius: 12,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+        ),
       ),
       body: ListView(
         padding: EdgeInsets.all(16),
         children: [
           // Profile Section
           Card(
+            color: ThemeProvider.darkGrey,
             elevation: 2,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: ThemeProvider.goldPrimary, width: 1.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Padding(
               padding: EdgeInsets.all(16),
               child: Column(
@@ -282,14 +302,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.person, color: ThemeProvider.enchantedEmerald, size: 24),
+                      Icon(Icons.person, color: ThemeProvider.goldLight, size: 24),
                       SizedBox(width: 12),
                       Text(
                         'Profile',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey[800],
+                          color: Colors.white,
                         ),
                       ),
                     ],
@@ -299,29 +319,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ListTile(
                       contentPadding: EdgeInsets.zero,
                       leading: CircleAvatar(
-                        backgroundColor: ThemeProvider.whisperGreen.withOpacity(0.3),
+                        backgroundColor: ThemeProvider.darkGrey,
                         child: Text(
                           _currentUser!.username.isNotEmpty 
                             ? _currentUser!.username[0].toUpperCase()
                             : 'U',
                           style: TextStyle(
-                            color: ThemeProvider.enchantedEmerald,
+                            color: ThemeProvider.goldLight,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                       title: Text(
                         _currentUser!.username,
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                        style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
                       ),
-                      subtitle: Text(_currentUser!.email),
+                      subtitle: Text(_currentUser!.email, style: TextStyle(color: Colors.white70)),
                       trailing: Icon(Icons.arrow_forward_ios, size: 16),
                       onTap: _showProfileDialog,
                     ),
                   ] else
                     Text(
                       'No user data available',
-                      style: TextStyle(color: Colors.grey[600]),
+                      style: TextStyle(color: Colors.white70),
                     ),
                 ],
               ),
@@ -332,7 +352,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           // Dietary Preferences Section
           Card(
+            color: ThemeProvider.darkGrey,
             elevation: 2,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: ThemeProvider.goldPrimary, width: 1.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Padding(
               padding: EdgeInsets.all(16),
               child: Column(
@@ -340,14 +365,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.restaurant, color: ThemeProvider.enchantedEmerald, size: 24),
+                      Icon(Icons.restaurant, color: ThemeProvider.goldLight, size: 24),
                       SizedBox(width: 12),
                       Text(
                         'Dietary Preferences',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey[800],
+                          color: Colors.white,
                         ),
                       ),
                     ],
@@ -360,10 +385,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onChanged: _isLoading ? null : (bool value) {
                       _updateDietaryPreference(value);
                     },
-                    activeColor: ThemeProvider.enchantedEmerald,
+                    activeColor: ThemeProvider.goldLight,
                     secondary: Icon(
                       _isVegetarian ? Icons.eco : Icons.restaurant,
-                      color: _isVegetarian ? Colors.green : Colors.grey[600],
+                      color: _isVegetarian ? ThemeProvider.goldLight : Colors.white70,
                     ),
                   ),
                   if (_isLoading)
@@ -376,14 +401,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             height: 16,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(ThemeProvider.enchantedEmerald!),
+                              valueColor: AlwaysStoppedAnimation<Color>(ThemeProvider.goldLight!),
                             ),
                           ),
                           SizedBox(width: 12),
                           Text(
                             'Updating preference...',
                             style: TextStyle(
-                              color: Colors.grey[600],
+                              color: Colors.white70,
                               fontSize: 12,
                             ),
                           ),
@@ -399,7 +424,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           // Theme Section
           Card(
+            color: ThemeProvider.darkGrey,
             elevation: 2,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: ThemeProvider.goldPrimary, width: 1.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Padding(
               padding: EdgeInsets.all(16),
               child: Column(
@@ -407,14 +437,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.palette, color: ThemeProvider.enchantedEmerald, size: 24),
+                      Icon(Icons.palette, color: ThemeProvider.goldLight, size: 24),
                       SizedBox(width: 12),
                       Text(
                         'Appearance',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey[800],
+                          color: Colors.white,
                         ),
                       ),
                     ],
@@ -433,15 +463,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ? 'Switched to dark mode' 
                               : 'Switched to light mode'
                           ),
-                          backgroundColor: Colors.blue,
+                          backgroundColor: ThemeProvider.goldPrimary,
                           duration: Duration(seconds: 2),
                         ),
                       );
                     },
-                    activeColor: ThemeProvider.enchantedEmerald,
+                    activeColor: ThemeProvider.goldLight,
                     secondary: Icon(
                       themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
-                      color: themeProvider.isDarkMode ? Colors.amber : Colors.grey[600],
+                      color: themeProvider.isDarkMode ? ThemeProvider.goldLight : Colors.white70,
                     ),
                   ),
                 ],
@@ -453,7 +483,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           // Account Actions Section
           Card(
+            color: ThemeProvider.darkGrey,
             elevation: 2,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: ThemeProvider.goldPrimary, width: 1.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Padding(
               padding: EdgeInsets.all(16),
               child: Column(
@@ -461,14 +496,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.account_circle, color: ThemeProvider.enchantedEmerald, size: 24),
+                      Icon(Icons.account_circle, color: ThemeProvider.goldLight, size: 24),
                       SizedBox(width: 12),
                       Text(
                         'Account',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey[800],
+                          color: Colors.white,
                         ),
                       ),
                     ],
@@ -478,15 +513,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   // Logout option
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    leading: Icon(Icons.logout, color: ThemeProvider.enchantedEmerald),
+                    leading: Icon(Icons.logout, color: ThemeProvider.goldLight),
                     title: Text(
                       'Logout',
                       style: TextStyle(
-                        color: ThemeProvider.enchantedEmerald,
+                        color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    subtitle: Text('Sign out of your account (data remains in database)'),
+                    subtitle: Text('Sign out of your account (data remains in database)', style: TextStyle(color: Colors.white70)),
                     trailing: Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: _logout,
                   ),

@@ -105,8 +105,8 @@ class _PeacefulChipState extends State<PeacefulChip>
 
   @override
   Widget build(BuildContext context) {
-    final selectedColor = widget.selectedColor ?? ThemeProvider.softTeal;
-    final unselectedColor = widget.unselectedColor ?? ThemeProvider.lightGray;
+    final selectedColor = widget.selectedColor ?? ThemeProvider.goldPrimary;
+    final unselectedColor = widget.unselectedColor ?? ThemeProvider.goldLight.withOpacity(0.6);
     final currentColor = widget.isSelected ? selectedColor : unselectedColor;
     
     return GestureDetector(
@@ -123,11 +123,11 @@ class _PeacefulChipState extends State<PeacefulChip>
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               decoration: BoxDecoration(
                 color: widget.isSelected 
-                    ? currentColor.withOpacity(0.2)
-                    : Colors.white.withOpacity(0.1),
+                    ? currentColor.withOpacity(0.18)
+                    : Colors.black,
                 borderRadius: BorderRadius.circular(25),
                 border: Border.all(
-                  color: currentColor.withOpacity(widget.isSelected ? 0.8 : 0.3),
+                  color: currentColor.withOpacity(widget.isSelected ? 0.9 : 0.4),
                   width: widget.isSelected ? 2 : 1,
                 ),
                 boxShadow: [
@@ -138,10 +138,10 @@ class _PeacefulChipState extends State<PeacefulChip>
                       spreadRadius: 2 * glowIntensity,
                     ),
                   BoxShadow(
-                    color: Colors.white.withOpacity(0.1),
-                    blurRadius: 8,
-                    spreadRadius: 0,
-                    offset: Offset(0, 2),
+                    color: ThemeProvider.goldPrimary.withOpacity(0.25),
+                    blurRadius: 16,
+                    spreadRadius: 1,
+                    offset: Offset(0, 4),
                   ),
                 ],
               ),
@@ -297,8 +297,8 @@ class _PeacefulFilterChipState extends State<PeacefulFilterChip>
 
   @override
   Widget build(BuildContext context) {
-    final chipColor = _getChipColor();
-    final currentColor = widget.isSelected ? chipColor : ThemeProvider.lightGray;
+    final chipColor = ThemeProvider.goldPrimary;
+    final currentColor = widget.isSelected ? chipColor : ThemeProvider.goldLight;
     
     return GestureDetector(
       onTap: _onTap,
@@ -314,12 +314,12 @@ class _PeacefulFilterChipState extends State<PeacefulFilterChip>
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: widget.isSelected 
-                    ? currentColor.withOpacity(0.15)
-                    : Colors.white.withOpacity(0.05),
+                    ? ThemeProvider.darkGrey
+                    : ThemeProvider.darkGrey,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: currentColor.withOpacity(widget.isSelected ? 0.6 : 0.2),
-                  width: widget.isSelected ? 1.5 : 1,
+                  color: currentColor.withOpacity(widget.isSelected ? 0.9 : 0.5),
+                  width: widget.isSelected ? 1.5 : 1.2,
                 ),
                 boxShadow: [
                   if (widget.isSelected)

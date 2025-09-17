@@ -19,8 +19,10 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-// Connect to database
-connectDB();
+// NOTE: Connect to the database only after the HTTP server starts successfully.
+// This prevents initializing the DB when the port is already in use, which
+// previously caused the pool to close during graceful shutdown and then be
+// reused by startup tasks.
 
 // Security middleware
 app.use(helmet({
@@ -134,7 +136,7 @@ app.use('*', (req, res) => {
 app.use(errorHandler);
 
 // Start server - Bind to all network interfaces for Flutter web compatibility
-const server = app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, '0.0.0.0', async () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📊 Environment: ${process.env.NODE_ENV}`);
   console.log(`🔗 Health check: http://localhost:${PORT}/health`);
@@ -143,6 +145,20 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`👤 User endpoints: http://localhost:${PORT}/api/users`);
   console.log(`📧 Email endpoints: http://localhost:${PORT}/api/email`);
   console.log(`🌐 Network access: http://192.168.28.245:${PORT}`);
+
+  // Connect to database now that server has started
+  try {
+    await connectDB();
+  } catch (e) {
+    console.error('❌ Failed to initialize database after server start:', e);
+    // Shut down gracefully if DB init fails
+    await gracefulShutdown('DB_INIT_FAILURE');
+  }
+});
+
+// Handle server "error" event (e.g., EADDRINUSE)
+server.on('error', (err) => {
+  console.error('Server startup error:', err);
 });
 
 // Graceful shutdown

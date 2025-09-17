@@ -5,16 +5,18 @@ class ThemeProvider extends ChangeNotifier {
   bool _isDarkMode = false; // Default to beautiful peaceful greenish light theme
   static const String _themeKey = 'isDarkMode';
 
-  // Beautiful Peaceful Greenish Palette - Enhanced with your perfect shades
-  static const Color dreamyMint = Color(0xFFF0F8F4);
-  static const Color whisperGreen = Color(0xFFE8F6EC);
-  static const Color serenityGreen = Color(0xFFD8F0DF);
-  static const Color peacefulSage = Color(0xFFB5C8AC);  // Your perfect #B5C8AC
-  static const Color enchantedEmerald = Color(0xFF90A76A);  // Your perfect #90A76A
-  static const Color mysticJade = Color(0xFF60774C);  // Your perfect #60774C
-  static const Color forestWhisper = Color(0xFF3A5231);  // Your perfect #3A5231
-  static const Color deepForest = Color(0xFF2A3F24);
-  static const Color silverMist = Color(0xFF8EA186);  // Your perfect #8EA186 - lighter and nicer
+  // Calm and Peaceful Lavender-to-Mint Gradient Palette
+  static const Color softLavender = Color(0xFFE8D5F2);  // Light lavender
+  static const Color gentleLavender = Color(0xFFD4C4E8);  // Medium lavender
+  static const Color dreamyMint = Color(0xFFD4F1D4);  // Light mint
+  static const Color whisperMint = Color(0xFFB8E6D1);  // Soft mint
+  static const Color serenityMint = Color(0xFF9FD3C7);  // Medium mint
+  static const Color peacefulSage = Color(0xFF7FB3B3);  // Sage-mint blend
+  static const Color enchantedEmerald = Color(0xFF6B9B9B);  // Deeper mint
+  static const Color mysticJade = Color(0xFF5A8A8A);  // Dark mint
+  static const Color forestWhisper = Color(0xFF4A7A7A);  // Deep mint
+  static const Color deepForest = Color(0xFF3A6A6A);  // Darkest mint
+  static const Color silverMist = Color(0xFFA8C8C8);  // Silver-mint blend
   
   // Complementary Gentle Colors
   static const Color softPeach = Color(0xFFFFE5D9);
@@ -28,21 +30,36 @@ class ThemeProvider extends ChangeNotifier {
   static const Color cottonCloud = Color(0xFFF9FCFA);
   static const Color moonlightGlow = Color(0xFFF5FBF8);
   
-  // Beautiful Text colors
-  static const Color deepSlate = Color(0xFF2D3748);
-  static const Color softGray = Color(0xFF4A5568);
-  static const Color lightGray = Color(0xFF718096);
-  static const Color whisperWhite = Color(0xFFF7FAFC);
-  static const Color emeraldText = Color(0xFF1B4D3E);
-  static const Color sageDark = Color(0xFF2F5D4F);
+  // Charcoal Gray Text Colors for Calm Design
+  static const Color deepSlate = Color(0xFF2D3748);  // Charcoal gray
+  static const Color softGray = Color(0xFF4A5568);  // Medium charcoal
+  static const Color lightGray = Color(0xFF718096);  // Light charcoal
+  static const Color whisperWhite = Color(0xFFF7FAFC);  // Soft white
+  static const Color emeraldText = Color(0xFF2D3748);  // Charcoal gray for main text
+  static const Color sageDark = Color(0xFF4A5568);  // Medium charcoal for secondary text
   
-  // Magical Accent colors
-  static const Color gentleCoral = Color(0xFFFF8A80);
-  static const Color softTeal = Color(0xFF4CAF93); // Updated to match our green theme
-  static const Color warmAmber = Color(0xFFFFB74D);
-  static const Color peacefulPurple = Color(0xFF9575CD);
-  static const Color rosePetal = Color(0xFFFFB3C1);
-  static const Color goldDust = Color(0xFFFFE08A);
+  // Blush Pink Button Colors for Calm Design
+  static const Color blushPink = Color(0xFFFFB3C1);  // Main blush pink
+  static const Color softBlush = Color(0xFFFFC7D1);  // Light blush pink
+  static const Color gentleBlush = Color(0xFFFFD1DB);  // Very light blush
+  static const Color deepBlush = Color(0xFFFF9FB1);  // Deeper blush pink
+  static const Color rosePetal = Color(0xFFFFB3C1);  // Rose petal pink
+  static const Color warmAmber = Color(0xFFFFB74D);  // Warm accent
+  static const Color peacefulPurple = Color(0xFF9575CD);  // Purple accent
+  static const Color goldDust = Color(0xFFFFE08A);  // Gold accent
+  // Gold palette for black theme
+  static const Color goldPrimary = Color(0xFFFFC107); // amber 500
+  static const Color goldLight = Color(0xFFFFD54F);   // amber 300
+  static const Color goldDeep = Color(0xFFFFB300);    // amber 700
+  static const Color darkGrey = Color(0xFF1E1E1E);
+  static const Color midGrey = Color(0xFF2A2A2A);
+
+  // Backwards-compatible aliases to avoid breaking existing widgets
+  // Map previous green/teal names to the new calm palette
+  static const Color softTeal = deepBlush;          // previously teal accents → use deeper blush
+  static const Color gentleCoral = blushPink;       // coral accents → blush pink
+  static const Color whisperGreen = whisperMint;    // old name mapped to new mint
+  static const Color serenityGreen = serenityMint;  // old name mapped to new mint
 
   bool get isDarkMode => _isDarkMode;
 
@@ -72,12 +89,12 @@ class ThemeProvider extends ChangeNotifier {
 
   ThemeData get lightTheme {
     return ThemeData(
-      primarySwatch: Colors.green,
-      primaryColor: mysticJade,
-      scaffoldBackgroundColor: moonlightGlow,
+      primarySwatch: Colors.amber,
+      primaryColor: goldPrimary,
+      scaffoldBackgroundColor: Colors.black,
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
-        foregroundColor: emeraldText,
+        foregroundColor: goldLight,
         elevation: 0,
         shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
@@ -90,20 +107,20 @@ class ThemeProvider extends ChangeNotifier {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: enchantedEmerald,
-          foregroundColor: whisperWhite,
+          backgroundColor: darkGrey,
+          foregroundColor: Colors.white,
           padding: EdgeInsets.symmetric(horizontal: 32, vertical: 18),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
           ),
           elevation: 12,
-          shadowColor: enchantedEmerald.withOpacity(0.4),
+          shadowColor: goldPrimary.withOpacity(0.5),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: enchantedEmerald,
-          side: BorderSide(color: enchantedEmerald, width: 2),
+          foregroundColor: goldPrimary,
+          side: BorderSide(color: goldPrimary, width: 2),
           padding: EdgeInsets.symmetric(horizontal: 32, vertical: 18),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
@@ -111,35 +128,36 @@ class ThemeProvider extends ChangeNotifier {
         ),
       ),
       cardTheme: CardThemeData(
-        color: cottonCloud.withOpacity(0.9),
+        color: darkGrey,
         elevation: 16,
-        shadowColor: enchantedEmerald.withOpacity(0.15),
+        shadowColor: goldPrimary.withOpacity(0.25),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(color: goldPrimary, width: 1.2),
+          borderRadius: BorderRadius.circular(16),
         ),
       ),
       textTheme: TextTheme(
-        bodyLarge: TextStyle(color: emeraldText, fontWeight: FontWeight.w500, letterSpacing: 0.3),
-        bodyMedium: TextStyle(color: sageDark, fontWeight: FontWeight.w400, letterSpacing: 0.2),
-        headlineLarge: TextStyle(color: emeraldText, fontWeight: FontWeight.bold, letterSpacing: 0.5),
-        headlineMedium: TextStyle(color: emeraldText, fontWeight: FontWeight.w600, letterSpacing: 0.4),
-        titleLarge: TextStyle(color: emeraldText, fontWeight: FontWeight.w600, letterSpacing: 0.3),
-        titleMedium: TextStyle(color: sageDark, fontWeight: FontWeight.w500, letterSpacing: 0.2),
+        bodyLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, letterSpacing: 0.3),
+        bodyMedium: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, letterSpacing: 0.2),
+        headlineLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+        headlineMedium: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, letterSpacing: 0.4),
+        titleLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, letterSpacing: 0.3),
+        titleMedium: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, letterSpacing: 0.2),
       ),
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: serenityGreen, width: 1.5),
+          borderSide: BorderSide(color: goldPrimary, width: 1.5),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: mysticJade, width: 2),
+          borderSide: BorderSide(color: goldLight, width: 2),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: peacefulSage, width: 1.5),
+          borderSide: BorderSide(color: goldPrimary, width: 1.5),
         ),
-        fillColor: cottonCloud.withOpacity(0.7),
+        fillColor: darkGrey,
         filled: true,
         contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       ),
@@ -148,8 +166,8 @@ class ThemeProvider extends ChangeNotifier {
 
   ThemeData get darkTheme {
     return ThemeData(
-      primarySwatch: Colors.blue,
-      primaryColor: softTeal,
+      primarySwatch: Colors.pink,
+      primaryColor: deepBlush,
       scaffoldBackgroundColor: deepSlate,
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
@@ -160,20 +178,20 @@ class ThemeProvider extends ChangeNotifier {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: softTeal,
+          backgroundColor: deepBlush,
           foregroundColor: whisperWhite,
           padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
           elevation: 8,
-          shadowColor: softTeal.withOpacity(0.3),
+          shadowColor: deepBlush.withOpacity(0.3),
         ),
       ),
       cardTheme: CardThemeData(
         color: Colors.white.withOpacity(0.1),
         elevation: 12,
-        shadowColor: softTeal.withOpacity(0.1),
+        shadowColor: deepBlush.withOpacity(0.1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
@@ -186,23 +204,23 @@ class ThemeProvider extends ChangeNotifier {
         titleLarge: TextStyle(color: whisperWhite, fontWeight: FontWeight.w600),
         titleMedium: TextStyle(color: lightGray, fontWeight: FontWeight.w500),
       ),
-      dividerColor: softTeal.withOpacity(0.3),
-      iconTheme: IconThemeData(color: softTeal),
-      primaryIconTheme: IconThemeData(color: softTeal),
+      dividerColor: deepBlush.withOpacity(0.3),
+      iconTheme: IconThemeData(color: deepBlush),
+      primaryIconTheme: IconThemeData(color: deepBlush),
       chipTheme: ChipThemeData(
         backgroundColor: Colors.white.withOpacity(0.1),
-        selectedColor: softTeal.withOpacity(0.2),
+        selectedColor: deepBlush.withOpacity(0.2),
         labelStyle: TextStyle(color: whisperWhite),
         secondaryLabelStyle: TextStyle(color: deepSlate),
         brightness: Brightness.dark,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: softTeal.withOpacity(0.3), width: 1),
+          side: BorderSide(color: deepBlush.withOpacity(0.3), width: 1),
         ),
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: softTeal,
+        backgroundColor: deepBlush,
         foregroundColor: whisperWhite,
         elevation: 12,
         shape: RoundedRectangleBorder(
@@ -211,7 +229,7 @@ class ThemeProvider extends ChangeNotifier {
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: Colors.white.withOpacity(0.1),
-        selectedItemColor: softTeal,
+        selectedItemColor: deepBlush,
         unselectedItemColor: lightGray,
         elevation: 8,
         type: BottomNavigationBarType.fixed,

@@ -11,8 +11,8 @@ class PeacefulBackground extends StatefulWidget {
   const PeacefulBackground({
     Key? key,
     required this.child,
-    this.showFloatingShapes = true,
-    this.enableParticles = true,
+    this.showFloatingShapes = false,
+    this.enableParticles = false,
     this.animationSpeed = 1.0,
   }) : super(key: key);
 
@@ -113,64 +113,10 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
       height: double.infinity,
       child: Stack(
         children: [
-          // Elegant peaceful gradient background - slow and subtle
-          AnimatedBuilder(
-            animation: _gradientAnimation,
-            builder: (context, child) {
-              final animValue = _gradientAnimation.value;
-              return Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment(-0.8 + (animValue * 0.2), -0.9 + (animValue * 0.1)),
-                    end: Alignment(0.8 - (animValue * 0.1), 0.9 - (animValue * 0.2)),
-                    colors: [
-                      ThemeProvider.dreamyMint,
-                      ThemeProvider.whisperGreen.withOpacity(0.95 + (animValue * 0.05)),
-                      ThemeProvider.serenityGreen.withOpacity(0.9 + (animValue * 0.1)),
-                      ThemeProvider.peacefulSage.withOpacity(0.85 + (animValue * 0.15)),
-                      ThemeProvider.silverMist.withOpacity(0.8 + (animValue * 0.2)),
-                    ],
-                    stops: [
-                      0.0,
-                      0.2 + (animValue * 0.05),
-                      0.45 + (animValue * 0.05),
-                      0.7 + (animValue * 0.05),
-                      1.0,
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
+          // Plain black background
+          Container(color: Colors.black),
 
-          // Gentle flowing wave overlay - very subtle
-          AnimatedBuilder(
-            animation: _waveAnimation,
-            builder: (context, child) {
-              return Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment(
-                      math.cos(_waveAnimation.value) * 0.3,
-                      math.sin(_waveAnimation.value * 0.5) * 0.2,
-                    ),
-                    end: Alignment(
-                      -math.cos(_waveAnimation.value) * 0.3,
-                      -math.sin(_waveAnimation.value * 0.5) * 0.2,
-                    ),
-                    colors: [
-                      ThemeProvider.peacefulSage.withOpacity(0.1),
-                      ThemeProvider.enchantedEmerald.withOpacity(0.05),
-                      Colors.transparent,
-                      ThemeProvider.silverMist.withOpacity(0.08),
-                      Colors.transparent,
-                    ],
-                    stops: [0.0, 0.3, 0.5, 0.7, 1.0],
-                  ),
-                ),
-              );
-            },
-          ),
+          // No overlays for plain design
 
           // Secondary flowing gradient overlay
           AnimatedBuilder(
@@ -215,7 +161,7 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                           shape: BoxShape.circle,
                           gradient: RadialGradient(
                             colors: [
-                              ThemeProvider.enchantedEmerald.withOpacity(0.15),
+                              ThemeProvider.blushPink.withOpacity(0.15),
                               ThemeProvider.peacefulSage.withOpacity(0.1),
                               ThemeProvider.silverMist.withOpacity(0.05),
                               Colors.transparent,
@@ -224,7 +170,7 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: ThemeProvider.enchantedEmerald.withOpacity(0.08),
+                              color: ThemeProvider.blushPink.withOpacity(0.08),
                               blurRadius: 40,
                               spreadRadius: 15,
                             ),
@@ -250,8 +196,8 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                           gradient: RadialGradient(
                             colors: [
                               ThemeProvider.peacefulSage.withOpacity(0.7),
-                              ThemeProvider.serenityGreen.withOpacity(0.5),
-                              ThemeProvider.whisperGreen.withOpacity(0.3),
+                              ThemeProvider.serenityMint.withOpacity(0.5),
+                              ThemeProvider.whisperMint.withOpacity(0.3),
                               Colors.transparent,
                             ],
                             stops: [0.0, 0.3, 0.6, 1.0],
@@ -279,7 +225,7 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                           gradient: RadialGradient(
                             colors: [
                               ThemeProvider.silverMist.withOpacity(0.8),
-                              ThemeProvider.whisperGreen.withOpacity(0.6),
+                              ThemeProvider.whisperMint.withOpacity(0.6),
                               ThemeProvider.dreamyMint.withOpacity(0.4),
                               Colors.transparent,
                             ],
@@ -309,7 +255,7 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                             colors: [
                               ThemeProvider.mysticJade.withOpacity(0.7),
                               ThemeProvider.forestWhisper.withOpacity(0.5),
-                              ThemeProvider.enchantedEmerald.withOpacity(0.3),
+                              ThemeProvider.blushPink.withOpacity(0.3),
                               Colors.transparent,
                             ],
                             stops: [0.0, 0.3, 0.6, 1.0],
@@ -340,20 +286,20 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                             gradient: RadialGradient(
                               colors: [
                                 [
-                                  ThemeProvider.enchantedEmerald,
+                                  ThemeProvider.blushPink,
                                   ThemeProvider.peacefulSage,
                                   ThemeProvider.silverMist,
                                   ThemeProvider.mysticJade,
-                                  ThemeProvider.serenityGreen,
-                                  ThemeProvider.whisperGreen,
+                                  ThemeProvider.serenityMint,
+                                  ThemeProvider.whisperMint,
                                 ][index % 6].withOpacity(0.6 - (index * 0.03)),
                                 [
-                                  ThemeProvider.enchantedEmerald,
+                                  ThemeProvider.blushPink,
                                   ThemeProvider.peacefulSage,
                                   ThemeProvider.silverMist,
                                   ThemeProvider.mysticJade,
-                                  ThemeProvider.serenityGreen,
-                                  ThemeProvider.whisperGreen,
+                                  ThemeProvider.serenityMint,
+                                  ThemeProvider.whisperMint,
                                 ][index % 6].withOpacity(0.3 - (index * 0.02)),
                                 Colors.transparent,
                               ],
@@ -361,14 +307,14 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: [
-                                  ThemeProvider.enchantedEmerald,
-                                  ThemeProvider.peacefulSage,
-                                  ThemeProvider.silverMist,
-                                  ThemeProvider.mysticJade,
-                                  ThemeProvider.serenityGreen,
-                                  ThemeProvider.whisperGreen,
-                                ][index % 6].withOpacity(0.2),
+                              color: [
+                                ThemeProvider.blushPink,
+                                ThemeProvider.peacefulSage,
+                                ThemeProvider.silverMist,
+                                ThemeProvider.mysticJade,
+                                ThemeProvider.serenityMint,
+                                ThemeProvider.whisperMint,
+                              ][index % 6].withOpacity(0.2),
                                 blurRadius: (15 + (index * 2)).toDouble(),
                                 spreadRadius: (3 + index).toDouble(),
                               ),
@@ -393,13 +339,13 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                             gradient: RadialGradient(
                               colors: [
                                 [
-                                  ThemeProvider.enchantedEmerald,
+                                  ThemeProvider.blushPink,
                                   ThemeProvider.peacefulSage,
                                   ThemeProvider.silverMist,
                                   ThemeProvider.mysticJade,
                                 ][index].withOpacity(0.5),
                                 [
-                                  ThemeProvider.enchantedEmerald,
+                                  ThemeProvider.blushPink,
                                   ThemeProvider.peacefulSage,
                                   ThemeProvider.silverMist,
                                   ThemeProvider.mysticJade,
@@ -411,7 +357,7 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                             boxShadow: [
                               BoxShadow(
                                 color: [
-                                  ThemeProvider.enchantedEmerald,
+                                  ThemeProvider.blushPink,
                                   ThemeProvider.peacefulSage,
                                   ThemeProvider.silverMist,
                                   ThemeProvider.mysticJade,
@@ -465,7 +411,7 @@ class FrostedGlassCard extends StatelessWidget {
         color: backgroundColor ?? ThemeProvider.cottonCloud.withOpacity(0.2),
         borderRadius: BorderRadius.circular(borderRadius ?? 24),
         border: Border.all(
-          color: ThemeProvider.enchantedEmerald.withOpacity(0.15),
+          color: ThemeProvider.blushPink.withOpacity(0.15),
           width: 1.5,
         ),
         gradient: LinearGradient(
@@ -474,7 +420,7 @@ class FrostedGlassCard extends StatelessWidget {
           colors: [
             Colors.white.withOpacity(0.25),
             ThemeProvider.dreamyMint.withOpacity(0.1),
-            ThemeProvider.whisperGreen.withOpacity(0.05),
+            ThemeProvider.whisperMint.withOpacity(0.05),
           ],
         ),
         boxShadow: [
@@ -491,7 +437,7 @@ class FrostedGlassCard extends StatelessWidget {
             offset: Offset(0, -8),
           ),
           BoxShadow(
-            color: ThemeProvider.enchantedEmerald.withOpacity(0.1),
+            color: ThemeProvider.blushPink.withOpacity(0.1),
             blurRadius: 60,
             spreadRadius: 0,
             offset: Offset(0, 20),
@@ -523,21 +469,13 @@ class PeacefulAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            ThemeProvider.dreamyMint.withOpacity(0.8),
-            ThemeProvider.whisperGreen.withOpacity(0.6),
-            Colors.transparent,
-          ],
-        ),
+        color: Colors.black,
         boxShadow: [
           BoxShadow(
-            color: ThemeProvider.mysticJade.withOpacity(0.1),
-            blurRadius: 20,
-            spreadRadius: 0,
-            offset: Offset(0, 4),
+            color: ThemeProvider.goldPrimary.withOpacity(0.35),
+            blurRadius: 24,
+            spreadRadius: 1,
+            offset: Offset(0, 6),
           ),
         ],
       ),
@@ -545,7 +483,7 @@ class PeacefulAppBar extends StatelessWidget implements PreferredSizeWidget {
         title: Text(
           title,
           style: TextStyle(
-            color: ThemeProvider.emeraldText,
+            color: Colors.white,
             fontSize: 22,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.8,
@@ -560,16 +498,16 @@ class PeacefulAppBar extends StatelessWidget implements PreferredSizeWidget {
                     icon: Container(
                       padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: ThemeProvider.cottonCloud.withOpacity(0.3),
+                        color: Colors.white.withOpacity(0.08),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: ThemeProvider.enchantedEmerald.withOpacity(0.2),
+                          color: ThemeProvider.goldPrimary.withOpacity(0.4),
                           width: 1,
                         ),
                       ),
                       child: Icon(
                         Icons.arrow_back_ios_new_rounded,
-                        color: ThemeProvider.emeraldText,
+                        color: ThemeProvider.goldLight,
                         size: 18,
                       ),
                     ),

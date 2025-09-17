@@ -30,7 +30,7 @@ class PeacefulSnackBar {
             ),
           ],
         ),
-        backgroundColor: ThemeProvider.softTeal,
+        backgroundColor: ThemeProvider.goldPrimary,
         duration: duration,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
@@ -77,7 +77,7 @@ class PeacefulSnackBar {
             ),
           ],
         ),
-        backgroundColor: ThemeProvider.gentleCoral,
+        backgroundColor: ThemeProvider.goldDeep,
         duration: duration,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
@@ -124,7 +124,7 @@ class PeacefulSnackBar {
             ),
           ],
         ),
-        backgroundColor: ThemeProvider.peacefulPurple,
+        backgroundColor: ThemeProvider.goldLight,
         duration: duration,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
@@ -171,7 +171,7 @@ class PeacefulSnackBar {
             ),
           ],
         ),
-        backgroundColor: ThemeProvider.warmAmber,
+        backgroundColor: ThemeProvider.goldPrimary,
         duration: duration,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(

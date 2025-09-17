@@ -68,24 +68,24 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         decoration: BoxDecoration(
                           gradient: RadialGradient(
                             colors: [
-                              ThemeProvider.enchantedEmerald,
-                              ThemeProvider.mysticJade,
-                              ThemeProvider.forestWhisper,
+                              ThemeProvider.goldPrimary,
+                              ThemeProvider.goldLight,
+                              ThemeProvider.goldDeep,
                             ],
                             stops: [0.0, 0.7, 1.0],
                           ),
                           borderRadius: BorderRadius.circular(60),
                           boxShadow: [
                             BoxShadow(
-                              color: ThemeProvider.enchantedEmerald.withOpacity(0.4),
+                              color: ThemeProvider.goldPrimary.withOpacity(0.6),
                               blurRadius: 30,
-                              spreadRadius: 0,
+                              spreadRadius: 1,
                               offset: Offset(0, 15),
                             ),
                             BoxShadow(
-                              color: ThemeProvider.mysticJade.withOpacity(0.2),
+                              color: ThemeProvider.goldLight.withOpacity(0.35),
                               blurRadius: 60,
-                              spreadRadius: 0,
+                              spreadRadius: 2,
                               offset: Offset(0, 25),
                             ),
                           ],
@@ -104,6 +104,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 // Beautiful welcome message
                 FrostedGlassCard(
                   padding: EdgeInsets.all(24),
+                  backgroundColor: ThemeProvider.darkGrey,
                   child: Column(
                     children: [
                       Text(
@@ -111,7 +112,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.w800,
-                          color: ThemeProvider.emeraldText,
+                          color: Colors.white,
                           letterSpacing: 1.2,
                           height: 1.2,
                         ),
@@ -123,7 +124,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         'Discover amazing recipes based on what you have in your kitchen',
                         style: TextStyle(
                           fontSize: 18,
-                          color: ThemeProvider.sageDark,
+                          color: Colors.white,
                           letterSpacing: 0.5,
                           height: 1.4,
                         ),
@@ -145,7 +146,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       },
                       width: double.infinity,
                       height: 64,
-                      backgroundColor: ThemeProvider.enchantedEmerald,
+                    backgroundColor: ThemeProvider.darkGrey,
                     ),
                     SizedBox(height: 20),
                     
@@ -157,7 +158,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       },
                       width: double.infinity,
                       height: 64,
-                      backgroundColor: ThemeProvider.peacefulSage,
+                    backgroundColor: ThemeProvider.darkGrey,
                       isOutlined: false,
                     ),
                   ],
@@ -169,7 +170,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   '✨ Let\'s create magic in your kitchen ✨',
                   style: TextStyle(
                     fontSize: 16,
-                    color: ThemeProvider.peacefulSage,
+                    color: Colors.white,
                     letterSpacing: 0.8,
                     fontStyle: FontStyle.italic,
                   ),

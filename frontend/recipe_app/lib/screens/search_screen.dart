@@ -167,8 +167,15 @@ class _SearchScreenState extends State<SearchScreen> {
             Container(
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey[50],
-                border: Border(bottom: BorderSide(color: Colors.grey[200]!)),
+                color: ThemeProvider.darkGrey,
+                border: Border(bottom: BorderSide(color: ThemeProvider.goldPrimary, width: 1.2)),
+                boxShadow: [
+                  BoxShadow(
+                    color: ThemeProvider.goldPrimary.withOpacity(0.15),
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
+                  ),
+                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,11 +188,24 @@ class _SearchScreenState extends State<SearchScreen> {
                           controller: _searchController,
                           decoration: InputDecoration(
                             hintText: 'Type ingredient name...',
+                            hintStyle: TextStyle(color: Colors.white70),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: ThemeProvider.goldPrimary),
                             ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: ThemeProvider.goldPrimary.withOpacity(0.7)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: ThemeProvider.goldLight, width: 2),
+                            ),
+                            fillColor: ThemeProvider.darkGrey,
+                            filled: true,
                             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                           ),
+                          style: TextStyle(color: Colors.white),
                           onSubmitted: (_) => _addCustomIngredient(),
                         ),
                       ),
@@ -193,6 +213,13 @@ class _SearchScreenState extends State<SearchScreen> {
                       ElevatedButton(
                         onPressed: _addCustomIngredient,
                         child: Text('Add'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ThemeProvider.darkGrey,
+                          foregroundColor: Colors.white,
+                          side: BorderSide(color: ThemeProvider.goldPrimary, width: 1.2),
+                          elevation: 6,
+                          shadowColor: ThemeProvider.goldPrimary.withOpacity(0.3),
+                        ),
                       ),
                     ],
                   ),
@@ -204,7 +231,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Colors.grey[700],
+                      color: Colors.white,
                     ),
                   ),
                   SizedBox(height: 8),
@@ -221,16 +248,25 @@ class _SearchScreenState extends State<SearchScreen> {
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
-                            color: isSelected ? ThemeProvider.enchantedEmerald : Colors.white,
+                            color: ThemeProvider.darkGrey,
                             border: Border.all(
-                              color: isSelected ? ThemeProvider.enchantedEmerald : Colors.grey[300]!,
+                              color: isSelected ? ThemeProvider.goldLight : ThemeProvider.goldPrimary,
+                              width: isSelected ? 1.6 : 1.2,
                             ),
                             borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              if (isSelected)
+                                BoxShadow(
+                                  color: ThemeProvider.goldPrimary.withOpacity(0.25),
+                                  blurRadius: 12,
+                                  offset: Offset(0, 4),
+                                ),
+                            ],
                           ),
                           child: Text(
                             timeOption['label'],
                             style: TextStyle(
-                              color: isSelected ? Colors.white : Colors.grey[700],
+                              color: Colors.white,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -258,6 +294,13 @@ class _SearchScreenState extends State<SearchScreen> {
                             'Find Recipes',
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                           ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ThemeProvider.darkGrey,
+                        foregroundColor: Colors.white,
+                        side: BorderSide(color: ThemeProvider.goldPrimary, width: 1.2),
+                        elevation: 8,
+                        shadowColor: ThemeProvider.goldPrimary.withOpacity(0.3),
+                      ),
                     ),
                   ),
                 ],
@@ -292,10 +335,11 @@ class _SearchScreenState extends State<SearchScreen> {
                       children: _requiredIngredients.map((ingredient) {
                         return Chip(
                           label: Text(ingredient),
-                          deleteIcon: Icon(Icons.close, size: 18),
+                          deleteIcon: Icon(Icons.close, size: 18, color: Colors.white),
                           onDeleted: () => _removeIngredient(ingredient),
-                          backgroundColor: Colors.red[100],
-                          labelStyle: TextStyle(color: Colors.red[800]),
+                          backgroundColor: ThemeProvider.darkGrey,
+                          labelStyle: TextStyle(color: Colors.white),
+                          shape: StadiumBorder(side: BorderSide(color: ThemeProvider.goldPrimary)),
                         );
                       }).toList(),
                     ),
@@ -312,7 +356,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.favorite_outline, color: ThemeProvider.enchantedEmerald, size: 18),
+                      Icon(Icons.favorite_outline, color: ThemeProvider.goldLight, size: 18),
                       SizedBox(width: 4),
                       Expanded(
                         child: Text(
@@ -320,7 +364,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: Colors.grey[700],
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -350,10 +394,11 @@ class _SearchScreenState extends State<SearchScreen> {
                             child: Container(
                               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                               decoration: BoxDecoration(
-                                color: isExpanded ? Colors.blue[50] : Colors.grey[50],
+                                color: ThemeProvider.darkGrey,
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
-                                  color: isExpanded ? Colors.blue[200]! : Colors.grey[200]!,
+                                  color: ThemeProvider.goldPrimary,
+                                  width: 1.2,
                                 ),
                               ),
                               child: Row(
@@ -363,13 +408,13 @@ class _SearchScreenState extends State<SearchScreen> {
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
-                                      color: isExpanded ? Colors.blue[700] : Colors.grey[700],
+                                      color: Colors.white,
                                     ),
                                   ),
                                   Spacer(),
                                   Icon(
                                     isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                                    color: isExpanded ? Colors.blue[600] : Colors.grey[600],
+                                    color: ThemeProvider.goldLight,
                                     size: 18,
                                   ),
                                 ],
@@ -390,17 +435,25 @@ class _SearchScreenState extends State<SearchScreen> {
                                   child: Container(
                                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                     decoration: BoxDecoration(
-                                      color: isSelected ? ThemeProvider.whisperGreen.withOpacity(0.3) : Colors.white,
+                                      color: ThemeProvider.darkGrey,
                                       borderRadius: BorderRadius.circular(16),
                                       border: Border.all(
-                                        color: isSelected ? ThemeProvider.peacefulSage : Colors.grey[300]!,
-                                        width: isSelected ? 1.5 : 1,
+                                        color: isSelected ? ThemeProvider.goldLight : ThemeProvider.goldPrimary,
+                                        width: isSelected ? 1.5 : 1.2,
                                       ),
+                                      boxShadow: [
+                                        if (isSelected)
+                                          BoxShadow(
+                                            color: ThemeProvider.goldPrimary.withOpacity(0.25),
+                                            blurRadius: 10,
+                                            offset: Offset(0, 3),
+                                          ),
+                                      ],
                                     ),
                                     child: Text(
                                       ingredient,
                                       style: TextStyle(
-                                        color: isSelected ? ThemeProvider.emeraldText : Colors.grey[600],
+                                        color: Colors.white,
                                         fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
                                         fontSize: 13,
                                       ),

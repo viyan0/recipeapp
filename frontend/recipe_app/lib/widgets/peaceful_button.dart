@@ -101,8 +101,8 @@ class _PeacefulButtonState extends State<PeacefulButton>
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = widget.backgroundColor ?? ThemeProvider.enchantedEmerald;
-    final textColor = widget.textColor ?? ThemeProvider.whisperWhite;
+    final bgColor = widget.backgroundColor ?? ThemeProvider.darkGrey;
+    final textColor = widget.textColor ?? Colors.white;
     
     return MouseRegion(
       onEnter: (_) => _onHoverEnter(),
@@ -122,37 +122,19 @@ class _PeacefulButtonState extends State<PeacefulButton>
                 decoration: BoxDecoration(
                   color: widget.isOutlined ? Colors.transparent : bgColor,
                   borderRadius: BorderRadius.circular(28),
-                  border: widget.isOutlined 
-                      ? Border.all(color: bgColor, width: 2)
-                      : null,
+                  border: Border.all(color: ThemeProvider.goldPrimary, width: widget.isOutlined ? 2 : 1.5),
                   boxShadow: [
-                    // Main shadow for depth
                     BoxShadow(
-                      color: bgColor.withOpacity(0.4),
-                      blurRadius: 25,
-                      spreadRadius: 0,
-                      offset: Offset(0, 10),
+                      color: ThemeProvider.goldPrimary.withOpacity(0.35),
+                      blurRadius: 20,
+                      spreadRadius: 1,
+                      offset: Offset(0, 8),
                     ),
-                    // Inner glow effect
                     BoxShadow(
-                      color: Colors.white.withOpacity(0.6),
-                      blurRadius: 25,
-                      spreadRadius: 0,
-                      offset: Offset(0, -6),
-                    ),
-                    // Outer glow for magical effect
-                    BoxShadow(
-                      color: bgColor.withOpacity(0.2),
+                      color: ThemeProvider.goldLight.withOpacity(0.2),
                       blurRadius: 40,
-                      spreadRadius: 0,
-                      offset: Offset(0, 15),
-                    ),
-                    // Soft highlight on top
-                    BoxShadow(
-                      color: Colors.white.withOpacity(0.3),
-                      blurRadius: 15,
-                      spreadRadius: 0,
-                      offset: Offset(0, -10),
+                      spreadRadius: 2,
+                      offset: Offset(0, 14),
                     ),
                   ],
                 ),
@@ -167,11 +149,11 @@ class _PeacefulButtonState extends State<PeacefulButton>
                             borderRadius: BorderRadius.circular(28),
                             gradient: RadialGradient(
                               center: Alignment.center,
-                              radius: _rippleAnimation.value * 3,
+                              radius: _rippleAnimation.value * 2.6,
                               colors: [
-                                Colors.white.withOpacity(0.8 * (1 - _rippleAnimation.value)),
-                                bgColor.withOpacity(0.6 * (1 - _rippleAnimation.value)),
-                                ThemeProvider.silverMist.withOpacity(0.3 * (1 - _rippleAnimation.value)),
+                                ThemeProvider.goldLight.withOpacity(0.25 * (1 - _rippleAnimation.value)),
+                                ThemeProvider.goldPrimary.withOpacity(0.4 * (1 - _rippleAnimation.value)),
+                                ThemeProvider.goldDeep.withOpacity(0.25 * (1 - _rippleAnimation.value)),
                                 Colors.transparent,
                               ],
                               stops: [
@@ -198,7 +180,7 @@ class _PeacefulButtonState extends State<PeacefulButton>
                               end: Alignment(1.0 + (2.0 * _rippleAnimation.value), 0.3),
                               colors: [
                                 Colors.transparent,
-                                Colors.white.withOpacity(0.3 * (1 - _rippleAnimation.value)),
+                                ThemeProvider.goldPrimary.withOpacity(0.35 * (1 - _rippleAnimation.value)),
                                 Colors.transparent,
                               ],
                               stops: [0.0, 0.5, 1.0],
@@ -345,7 +327,7 @@ class _PeacefulIconButtonState extends State<PeacefulIconButton>
 
   @override
   Widget build(BuildContext context) {
-    final iconColor = widget.color ?? ThemeProvider.enchantedEmerald;
+    final iconColor = widget.color ?? ThemeProvider.blushPink;
     final bgColor = widget.backgroundColor ?? Colors.white.withOpacity(0.2);
     
     return Tooltip(
@@ -413,7 +395,7 @@ class _PeacefulIconButtonState extends State<PeacefulIconButton>
                                 colors: [
                                   Colors.white.withOpacity(0.7 * (1 - _rippleAnimation.value)),
                                   iconColor.withOpacity(0.5 * (1 - _rippleAnimation.value)),
-                                  ThemeProvider.peacefulSage.withOpacity(0.2 * (1 - _rippleAnimation.value)),
+                                  ThemeProvider.softBlush.withOpacity(0.2 * (1 - _rippleAnimation.value)),
                                   Colors.transparent,
                                 ],
                                 stops: [
