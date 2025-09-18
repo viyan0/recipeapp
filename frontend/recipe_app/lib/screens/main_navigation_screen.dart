@@ -46,19 +46,19 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_selectedIndex == 0 ? 'Find Recipes' : 'My Favorites'),
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
+        backgroundColor: ThemeProvider.gentleLavender,
+        foregroundColor: ThemeProvider.deepLavender,
         automaticallyImplyLeading: false,
         elevation: 0,
         flexibleSpace: Container(
           decoration: BoxDecoration(
-            color: ThemeProvider.darkGrey,
+            color: ThemeProvider.gentleLavender,
             border: Border(
-              bottom: BorderSide(color: ThemeProvider.goldPrimary, width: 1.5),
+              bottom: BorderSide(color: ThemeProvider.deepLavender, width: 1.5),
             ),
             boxShadow: [
               BoxShadow(
-                color: ThemeProvider.goldPrimary.withOpacity(0.25),
+                color: ThemeProvider.lavenderShadow.withOpacity(0.18),
                 blurRadius: 12,
                 offset: Offset(0, 4),
               ),
@@ -66,9 +66,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           ),
         ),
         actions: [
-          if (_selectedIndex == 0) // Show favorites button on search tab
+          if (_selectedIndex == 0)
             IconButton(
-              icon: Icon(Icons.favorite),
+              icon: Icon(Icons.favorite, color: ThemeProvider.pastelPink),
               onPressed: () {
                 setState(() {
                   _selectedIndex = 1;
@@ -76,16 +76,16 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               },
               tooltip: 'View Favorites',
             ),
-          if (_selectedIndex == 1) // Show refresh only on favorites tab
+          if (_selectedIndex == 1)
             IconButton(
-              icon: Icon(Icons.refresh),
+              icon: Icon(Icons.refresh, color: ThemeProvider.deepLavender),
               onPressed: () {
                 _favoritesKey.currentState?.loadFavorites();
               },
               tooltip: 'Refresh',
             ),
           IconButton(
-            icon: Icon(Icons.settings),
+            icon: Icon(Icons.settings, color: ThemeProvider.deepLavender),
             onPressed: _goToSettings,
             tooltip: 'Settings',
           ),

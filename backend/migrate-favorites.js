@@ -42,3 +42,4 @@ async function migrateFavoritesTable() {
 migrateFavoritesTable().catch(console.error);
 
 
+

@@ -175,7 +175,7 @@ class _ConnectionTestScreenState extends State<ConnectionTestScreen> {
             ElevatedButton(
               onPressed: _isLoading ? null : _testRecipeEndpoint,
               style: ElevatedButton.styleFrom(
-                backgroundColor: ThemeProvider.enchantedEmerald,
+                backgroundColor: ThemeProvider.deepLavender,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.all(16),
               ),

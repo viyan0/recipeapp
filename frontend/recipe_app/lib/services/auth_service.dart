@@ -45,7 +45,7 @@ class AuthService {
     await prefs.setBool('isLoggedIn', false);
   }
 
-  // Sign up with dietary preference - creates account and sends OTP
+  // Sign up with dietary preference - now returns token directly
   static Future<Map<String, dynamic>> signUp({
     required String email,
     required String username,
@@ -77,16 +77,22 @@ class AuthService {
       if (response.statusCode == 201) {
         final responseData = jsonDecode(response.body);
         
-        // Handle the backend response format - signup now returns verification info
         if (responseData['status'] == 'success' && responseData['data'] != null) {
+          // Build user and save immediately (auto-login)
+          final userData = responseData['data'];
+          final user = User(
+            id: userData['id'].toString(),
+            email: userData['email'],
+            username: userData['username'],
+            isVegetarian: userData['isVegetarian'] ?? false,
+            createdAt: DateTime.parse(userData['createdAt']),
+            token: responseData['token'],
+          );
+          await saveUserData(user);
           return {
             'success': true,
-            'message': responseData['message'],
-            'email': responseData['data']['email'],
-            'username': responseData['data']['username'],
-            'needsVerification': true,
-            'verificationEmailSent': responseData['data']['verificationEmailSent'],
-            'developmentOTP': responseData['data']['developmentOTP'],
+            'message': responseData['message'] ?? 'Account created successfully',
+            'token': responseData['token'],
           };
         } else {
           throw Exception(responseData['message'] ?? 'Sign up failed');
@@ -128,95 +134,7 @@ class AuthService {
     }
   }
 
-  // Verify OTP code
-  static Future<User> verifyOTP({
-    required String email,
-    required String otp,
-  }) async {
-    try {
-      final url = '$baseUrl/api/auth/verify-email';
-      print('Attempting to verify OTP at: $url'); // Debug log
-      
-      final response = await http.post(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: jsonEncode({
-          'email': email,
-          'otp': otp,
-        }),
-      );
-
-      print('Response status: ${response.statusCode}'); // Debug log
-      print('Response body: ${response.body}'); // Debug log
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        
-        if (responseData['status'] == 'success' && responseData['data'] != null) {
-          // After successful verification, user needs to login
-          return User(
-            id: '', // Will be set after login
-            email: responseData['data']['email'],
-            username: responseData['data']['username'],
-            isVegetarian: false,
-            createdAt: DateTime.now(),
-            token: null, // No token yet - user needs to login
-          );
-        } else {
-          throw Exception(responseData['message'] ?? 'Verification failed');
-        }
-      } else {
-        final errorData = jsonDecode(response.body);
-        throw Exception(errorData['message'] ?? 'Verification failed');
-      }
-    } catch (e) {
-      print('OTP verification error: $e'); // Debug log
-      if (e.toString().contains('SocketException') || e.toString().contains('Connection refused')) {
-        throw Exception('Cannot connect to server. Please check if the backend is running.');
-      }
-      throw Exception('Network error: $e');
-    }
-  }
-
-  // Resend OTP
-  static Future<bool> resendOTP({
-    required String email,
-  }) async {
-    try {
-      final url = '$baseUrl/api/auth/resend-verification';
-      print('Attempting to resend OTP at: $url'); // Debug log
-      
-      final response = await http.post(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: jsonEncode({
-          'email': email,
-        }),
-      );
-
-      print('Response status: ${response.statusCode}'); // Debug log
-      print('Response body: ${response.body}'); // Debug log
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        return responseData['status'] == 'success';
-      } else {
-        final errorData = jsonDecode(response.body);
-        throw Exception(errorData['message'] ?? 'Failed to resend OTP');
-      }
-    } catch (e) {
-      print('Resend OTP error: $e'); // Debug log
-      throw Exception('Network error: $e');
-    }
-  }
+  // OTP verification and resend removed
 
   // Login
   static Future<User> login({

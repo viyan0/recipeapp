@@ -79,7 +79,7 @@ class FavoritesScreenState extends State<FavoritesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('My Favorites'),
-        backgroundColor: ThemeProvider.enchantedEmerald,
+        backgroundColor: ThemeProvider.deepLavender,
         foregroundColor: Colors.white,
         automaticallyImplyLeading: false,
         actions: [
@@ -159,7 +159,7 @@ class FavoritesScreenState extends State<FavoritesScreen> {
                               Navigator.pushReplacementNamed(context, '/main');
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: ThemeProvider.enchantedEmerald,
+                              backgroundColor: ThemeProvider.deepLavender,
                               foregroundColor: Colors.white,
                             ),
                             child: Text('Find Recipes'),
@@ -197,14 +197,14 @@ class FavoritesScreenState extends State<FavoritesScreen> {
                                           errorBuilder: (context, error, stackTrace) {
                                             return Icon(
                                               Icons.restaurant,
-                                              color: ThemeProvider.enchantedEmerald,
+                                              color: ThemeProvider.deepLavender,
                                             );
                                           },
                                         ),
                                       )
                                     : Icon(
                                         Icons.restaurant,
-                                        color: ThemeProvider.enchantedEmerald,
+                                        color: ThemeProvider.deepLavender,
                                       ),
                               ),
                               title: Text(

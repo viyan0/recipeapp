@@ -72,52 +72,31 @@ router.post('/signup', [
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
-    // Generate 6-digit OTP code
-    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes from now
-
-    // Create user with OTP verification fields
+    // Create user and mark as verified by default; return JWT immediately
     const result = await pool.query(
-      'INSERT INTO users (username, email, password_hash, is_vegetarian, email_verification_otp, otp_expires_at, email_verification_sent_at, otp_attempts) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, username, email, is_vegetarian, created_at',
-      [username, email, passwordHash, isVegetarian, otpCode, otpExpires, new Date(), 0]
+      'INSERT INTO users (username, email, password_hash, is_vegetarian, email_verified) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, email, is_vegetarian, created_at, email_verified',
+      [username, email, passwordHash, isVegetarian, true]
     );
 
     const user = result.rows[0];
 
-    // Send email verification with OTP
-    let emailSent = false;
-    try {
-      const emailResult = await EmailService.sendEmailVerification(email, username, otpCode);
-      if (emailResult.success) {
-        console.log(`✅ Verification email with OTP sent to ${email}`);
-        emailSent = true;
-      } else {
-        console.error('❌ Failed to send verification email:', emailResult.error);
-        // Check if it's a Resend restriction error
-        if (emailResult.error && emailResult.error.includes('testing emails')) {
-          console.log('🔧 Development mode: Email restriction detected');
-        }
-      }
-    } catch (emailError) {
-      console.error('❌ Failed to send verification email:', emailError);
-    }
+    const token = jwt.sign(
+      { id: user.id },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN }
+    );
 
     res.status(201).json({
       status: 'success',
-      message: emailSent 
-        ? 'Account created successfully! Please check your email to verify your account before logging in.'
-        : 'Account created successfully! Please use the verification code in development mode or contact support.',
+      message: 'Account created successfully!',
       data: {
         id: user.id,
         email: user.email,
         username: user.username,
         isVegetarian: user.is_vegetarian,
-        createdAt: user.created_at,
-        emailVerified: false,
-        verificationEmailSent: emailSent,
-        developmentOTP: process.env.NODE_ENV === 'development' && !emailSent ? otpCode : undefined
-      }
-      // No token provided - user must verify email first
+        createdAt: user.created_at
+      },
+      token: token
     });
   } catch (error) {
     console.error('Signup error:', error);
@@ -176,18 +155,7 @@ router.post('/login', [
       });
     }
 
-    // Check if email is verified
-    if (!user.email_verified) {
-      return res.status(403).json({
-        status: 'error',
-        message: 'Please verify your email address before logging in. Check your inbox for the verification email.',
-        code: 'EMAIL_NOT_VERIFIED',
-        data: {
-          email: user.email,
-          needsVerification: true
-        }
-      });
-    }
+    // Email verification no longer required
 
     // Generate JWT token
     const token = jwt.sign(
@@ -294,209 +262,6 @@ router.put('/profile', [
   }
 });
 
-// @route   POST /verify-email
-// @desc    Verify user email with OTP code
-// @access  Public
-router.post('/verify-email', [
-  body('email')
-    .isEmail()
-    .withMessage('Please provide a valid email address'),
-  body('otp')
-    .notEmpty()
-    .withMessage('OTP code is required')
-    .isLength({ min: 6, max: 6 })
-    .withMessage('OTP code must be exactly 6 digits')
-    .isNumeric()
-    .withMessage('OTP code must contain only numbers')
-], async (req, res) => {
-  try {
-    // Check for validation errors
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Validation failed',
-        errors: errors.array()
-      });
-    }
-
-    const { email, otp } = req.body;
-
-    // Find user with this email and OTP
-    const result = await pool.query(
-      'SELECT id, username, email, otp_expires_at, otp_attempts FROM users WHERE email = $1 AND email_verification_otp = $2',
-      [email, otp]
-    );
-
-    if (result.rows.length === 0) {
-      // Increment failed attempts for this email
-      await pool.query(
-        'UPDATE users SET otp_attempts = otp_attempts + 1 WHERE email = $1',
-        [email]
-      );
-      
-      return res.status(400).json({
-        status: 'error',
-        message: 'Invalid OTP code. Please check the code and try again.',
-        code: 'INVALID_OTP'
-      });
-    }
-
-    const user = result.rows[0];
-
-    // Check if too many attempts
-    if (user.otp_attempts >= 5) {
-      return res.status(429).json({
-        status: 'error',
-        message: 'Too many failed attempts. Please request a new OTP code.',
-        code: 'TOO_MANY_ATTEMPTS'
-      });
-    }
-
-    // Check if OTP has expired
-    if (new Date() > new Date(user.otp_expires_at)) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'OTP code has expired. Please request a new verification email.',
-        code: 'OTP_EXPIRED',
-        data: {
-          email: user.email
-        }
-      });
-    }
-
-    // Update user as verified and clear OTP fields
-    await pool.query(
-      'UPDATE users SET email_verified = true, email_verification_otp = NULL, otp_expires_at = NULL, otp_attempts = 0 WHERE id = $1',
-      [user.id]
-    );
-
-    // Send welcome email
-    try {
-      await EmailService.sendWelcomeEmail(user.email, user.username);
-      console.log(`✅ Welcome email sent to ${user.email}`);
-    } catch (emailError) {
-      console.error('❌ Failed to send welcome email:', emailError);
-      // Continue even if welcome email fails
-    }
-
-    res.json({
-      status: 'success',
-      message: 'Email verified successfully! You can now log in to your account.',
-      data: {
-        email: user.email,
-        username: user.username,
-        verified: true
-      }
-    });
-  } catch (error) {
-    console.error('Email verification error:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Server error during email verification'
-    });
-  }
-});
-
-// @route   POST /resend-verification
-// @desc    Resend email verification
-// @access  Public
-router.post('/resend-verification', [
-  body('email')
-    .isEmail()
-    .withMessage('Please provide a valid email')
-], async (req, res) => {
-  try {
-    // Check for validation errors
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Validation failed',
-        errors: errors.array()
-      });
-    }
-
-    const { email } = req.body;
-
-    // Find user with this email
-    const result = await pool.query(
-      'SELECT id, username, email, email_verified, email_verification_sent_at FROM users WHERE email = $1',
-      [email]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        status: 'error',
-        message: 'No account found with this email address'
-      });
-    }
-
-    const user = result.rows[0];
-
-    // Check if already verified
-    if (user.email_verified) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Email is already verified. You can log in now.'
-      });
-    }
-
-    // Check rate limiting - only allow resend every 2 minutes
-    const lastSent = new Date(user.email_verification_sent_at);
-    const now = new Date();
-    const timeDiff = now - lastSent;
-    const twoMinutes = 2 * 60 * 1000;
-
-    if (timeDiff < twoMinutes) {
-      const remainingTime = Math.ceil((twoMinutes - timeDiff) / 1000);
-      return res.status(429).json({
-        status: 'error',
-        message: `Please wait ${remainingTime} seconds before requesting another verification email.`,
-        code: 'RATE_LIMITED',
-        data: {
-          retryAfter: remainingTime
-        }
-      });
-    }
-
-    // Generate new OTP code
-    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes from now
-
-    // Update user with new OTP
-    await pool.query(
-      'UPDATE users SET email_verification_otp = $1, otp_expires_at = $2, email_verification_sent_at = $3, otp_attempts = 0 WHERE id = $4',
-      [otpCode, otpExpires, new Date(), user.id]
-    );
-
-    // Send verification email with OTP
-    try {
-      await EmailService.sendEmailVerification(email, user.username, otpCode);
-      console.log(`✅ Verification email with new OTP sent to ${email}`);
-    } catch (emailError) {
-      console.error('❌ Failed to resend verification email:', emailError);
-      return res.status(500).json({
-        status: 'error',
-        message: 'Failed to send verification email. Please try again later.'
-      });
-    }
-
-    res.json({
-      status: 'success',
-      message: 'Verification email sent! Please check your inbox.',
-      data: {
-        email: email,
-        verificationSent: true
-      }
-    });
-  } catch (error) {
-    console.error('Resend verification error:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Server error during resend verification'
-    });
-  }
-});
+// Email verification endpoints removed
 
 module.exports = router;

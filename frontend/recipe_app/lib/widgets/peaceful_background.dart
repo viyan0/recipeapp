@@ -113,8 +113,22 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
       height: double.infinity,
       child: Stack(
         children: [
-          // Plain black background
-          Container(color: Colors.black),
+          // Lavender dreamy background
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  ThemeProvider.softLavender,
+                  ThemeProvider.gentleLavender,
+                  ThemeProvider.dreamyLavender.withOpacity(0.85),
+                  ThemeProvider.pastelPink.withOpacity(0.7),
+                ],
+                stops: [0.0, 0.5, 0.8, 1.0],
+              ),
+            ),
+          ),
 
           // No overlays for plain design
 
@@ -131,11 +145,11 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                     ),
                     radius: 0.8 + (math.sin(_waveAnimation.value * 2) * 0.3),
                     colors: [
-                      ThemeProvider.mysticJade.withOpacity(0.1),
-                      ThemeProvider.forestWhisper.withOpacity(0.05),
+                      ThemeProvider.dreamyLavender.withOpacity(0.13),
+                      ThemeProvider.pastelPink.withOpacity(0.08),
                       Colors.transparent,
                     ],
-                    stops: [0.0, 0.6, 1.0],
+                    stops: [0.0, 0.7, 1.0],
                   ),
                 ),
               );
@@ -150,7 +164,7 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                 final size = MediaQuery.of(context).size;
                 return Stack(
                   children: [
-                    // Large floating emerald orb - much more visible
+                    // Large floating orb
                     Positioned(
                       top: size.height * 0.15 + (80 * math.sin(_floatingAnimation.value * 2 * math.pi)),
                       left: size.width * 0.1 + (60 * math.cos(_floatingAnimation.value * 2 * math.pi)),
@@ -161,21 +175,21 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                           shape: BoxShape.circle,
                           gradient: RadialGradient(
                             colors: [
-                              ThemeProvider.blushPink.withOpacity(0.15),
-                              ThemeProvider.peacefulSage.withOpacity(0.1),
-                              ThemeProvider.silverMist.withOpacity(0.05),
+                              ThemeProvider.pastelPink.withOpacity(0.15),
+                              ThemeProvider.pastelMint.withOpacity(0.1),
+                              ThemeProvider.pastelBlue.withOpacity(0.05),
                               Colors.transparent,
                             ],
                             stops: [0.0, 0.4, 0.7, 1.0],
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: ThemeProvider.blushPink.withOpacity(0.08),
+                              color: ThemeProvider.pastelPink.withOpacity(0.08),
                               blurRadius: 40,
                               spreadRadius: 15,
                             ),
                             BoxShadow(
-                              color: ThemeProvider.peacefulSage.withOpacity(0.05),
+                              color: ThemeProvider.pastelMint.withOpacity(0.05),
                               blurRadius: 60,
                               spreadRadius: 20,
                             ),
@@ -183,8 +197,7 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                         ),
                       ),
                     ),
-                    
-                    // Medium sage circle - more visible
+                    // Medium circle
                     Positioned(
                       top: size.height * 0.4 + (50 * math.cos(_floatingAnimation.value * 3 * math.pi)),
                       right: size.width * 0.15 + (40 * math.sin(_floatingAnimation.value * 2.5 * math.pi)),
@@ -195,16 +208,16 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                           shape: BoxShape.circle,
                           gradient: RadialGradient(
                             colors: [
-                              ThemeProvider.peacefulSage.withOpacity(0.7),
-                              ThemeProvider.serenityMint.withOpacity(0.5),
-                              ThemeProvider.whisperMint.withOpacity(0.3),
+                              ThemeProvider.pastelMint.withOpacity(0.7),
+                              ThemeProvider.pastelBlue.withOpacity(0.5),
+                              ThemeProvider.pastelPink.withOpacity(0.3),
                               Colors.transparent,
                             ],
                             stops: [0.0, 0.3, 0.6, 1.0],
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: ThemeProvider.peacefulSage.withOpacity(0.4),
+                              color: ThemeProvider.pastelMint.withOpacity(0.4),
                               blurRadius: 35,
                               spreadRadius: 12,
                             ),
@@ -212,8 +225,7 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                         ),
                       ),
                     ),
-                    
-                    // Small whisper green orb - more visible
+                    // Small orb
                     Positioned(
                       bottom: size.height * 0.25 + (60 * math.sin(_floatingAnimation.value * 4 * math.pi)),
                       left: size.width * 0.2 + (45 * math.cos(_floatingAnimation.value * 3.5 * math.pi)),
@@ -224,16 +236,16 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                           shape: BoxShape.circle,
                           gradient: RadialGradient(
                             colors: [
-                              ThemeProvider.silverMist.withOpacity(0.8),
-                              ThemeProvider.whisperMint.withOpacity(0.6),
-                              ThemeProvider.dreamyMint.withOpacity(0.4),
+                              ThemeProvider.pastelBlue.withOpacity(0.8),
+                              ThemeProvider.pastelMint.withOpacity(0.6),
+                              ThemeProvider.gentleLavender.withOpacity(0.4),
                               Colors.transparent,
                             ],
                             stops: [0.0, 0.3, 0.6, 1.0],
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: ThemeProvider.silverMist.withOpacity(0.3),
+                              color: ThemeProvider.pastelBlue.withOpacity(0.3),
                               blurRadius: 30,
                               spreadRadius: 10,
                             ),
@@ -241,8 +253,7 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                         ),
                       ),
                     ),
-                    
-                    // Flowing forest wisp - much more visible
+                    // Flowing wisp
                     Positioned(
                       bottom: size.height * 0.1 + (40 * math.cos(_waveAnimation.value * 2)),
                       right: size.width * 0.25 + (70 * math.sin(_waveAnimation.value * 1.5)),
@@ -253,16 +264,16 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                           shape: BoxShape.circle,
                           gradient: RadialGradient(
                             colors: [
-                              ThemeProvider.mysticJade.withOpacity(0.7),
-                              ThemeProvider.forestWhisper.withOpacity(0.5),
-                              ThemeProvider.blushPink.withOpacity(0.3),
+                              ThemeProvider.deepLavender.withOpacity(0.7),
+                              ThemeProvider.gentleLavender.withOpacity(0.5),
+                              ThemeProvider.pastelPink.withOpacity(0.3),
                               Colors.transparent,
                             ],
                             stops: [0.0, 0.3, 0.6, 1.0],
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: ThemeProvider.mysticJade.withOpacity(0.4),
+                              color: ThemeProvider.deepLavender.withOpacity(0.4),
                               blurRadius: 45,
                               spreadRadius: 18,
                             ),
@@ -270,11 +281,18 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                         ),
                       ),
                     ),
-                    
-                    // Beautiful floating particles - much more visible
+                    // Beautiful floating particles
                     ...List.generate(12, (index) {
                       final angle = (index * math.pi / 6) + (_particleAnimation.value * 2 * math.pi);
                       final radius = 50 + (index * 20);
+                      final colorList = [
+                        ThemeProvider.pastelPink,
+                        ThemeProvider.pastelMint,
+                        ThemeProvider.pastelBlue,
+                        ThemeProvider.gentleLavender,
+                        ThemeProvider.deepLavender,
+                        ThemeProvider.pastelYellow,
+                      ];
                       return Positioned(
                         top: size.height * 0.6 + (radius * math.sin(angle * (1 + index * 0.1))),
                         right: size.width * 0.6 + (radius * math.cos(angle * (1 + index * 0.1))),
@@ -285,36 +303,15 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                             shape: BoxShape.circle,
                             gradient: RadialGradient(
                               colors: [
-                                [
-                                  ThemeProvider.blushPink,
-                                  ThemeProvider.peacefulSage,
-                                  ThemeProvider.silverMist,
-                                  ThemeProvider.mysticJade,
-                                  ThemeProvider.serenityMint,
-                                  ThemeProvider.whisperMint,
-                                ][index % 6].withOpacity(0.6 - (index * 0.03)),
-                                [
-                                  ThemeProvider.blushPink,
-                                  ThemeProvider.peacefulSage,
-                                  ThemeProvider.silverMist,
-                                  ThemeProvider.mysticJade,
-                                  ThemeProvider.serenityMint,
-                                  ThemeProvider.whisperMint,
-                                ][index % 6].withOpacity(0.3 - (index * 0.02)),
+                                colorList[index % colorList.length].withOpacity(0.6 - (index * 0.03)),
+                                colorList[index % colorList.length].withOpacity(0.3 - (index * 0.02)),
                                 Colors.transparent,
                               ],
                               stops: [0.0, 0.5, 1.0],
                             ),
                             boxShadow: [
                               BoxShadow(
-                              color: [
-                                ThemeProvider.blushPink,
-                                ThemeProvider.peacefulSage,
-                                ThemeProvider.silverMist,
-                                ThemeProvider.mysticJade,
-                                ThemeProvider.serenityMint,
-                                ThemeProvider.whisperMint,
-                              ][index % 6].withOpacity(0.2),
+                                color: colorList[index % colorList.length].withOpacity(0.2),
                                 blurRadius: (15 + (index * 2)).toDouble(),
                                 spreadRadius: (3 + index).toDouble(),
                               ),
@@ -323,11 +320,16 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                         ),
                       );
                     }),
-
-                    // Additional larger floating elements for more visible animation
+                    // Additional larger floating elements
                     ...List.generate(4, (index) {
                       final angle = (index * math.pi / 2) + (_waveAnimation.value * math.pi);
                       final radius = 60 + (index * 40);
+                      final colorList = [
+                        ThemeProvider.pastelPink,
+                        ThemeProvider.pastelMint,
+                        ThemeProvider.pastelBlue,
+                        ThemeProvider.gentleLavender,
+                      ];
                       return Positioned(
                         top: size.height * 0.3 + (radius * math.sin(angle)),
                         left: size.width * 0.4 + (radius * math.cos(angle)),
@@ -338,30 +340,15 @@ class _PeacefulBackgroundState extends State<PeacefulBackground>
                             shape: BoxShape.circle,
                             gradient: RadialGradient(
                               colors: [
-                                [
-                                  ThemeProvider.blushPink,
-                                  ThemeProvider.peacefulSage,
-                                  ThemeProvider.silverMist,
-                                  ThemeProvider.mysticJade,
-                                ][index].withOpacity(0.5),
-                                [
-                                  ThemeProvider.blushPink,
-                                  ThemeProvider.peacefulSage,
-                                  ThemeProvider.silverMist,
-                                  ThemeProvider.mysticJade,
-                                ][index].withOpacity(0.2),
+                                colorList[index].withOpacity(0.5),
+                                colorList[index].withOpacity(0.2),
                                 Colors.transparent,
                               ],
                               stops: [0.0, 0.6, 1.0],
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: [
-                                  ThemeProvider.blushPink,
-                                  ThemeProvider.peacefulSage,
-                                  ThemeProvider.silverMist,
-                                  ThemeProvider.mysticJade,
-                                ][index].withOpacity(0.3),
+                                color: colorList[index].withOpacity(0.3),
                                 blurRadius: (25 + (index * 5)).toDouble(),
                                 spreadRadius: (8 + (index * 2)).toDouble(),
                               ),
@@ -408,36 +395,36 @@ class FrostedGlassCard extends StatelessWidget {
       height: height,
       padding: padding ?? EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: backgroundColor ?? ThemeProvider.cottonCloud.withOpacity(0.2),
+        color: backgroundColor ?? ThemeProvider.cardBackground.withOpacity(0.95),
         borderRadius: BorderRadius.circular(borderRadius ?? 24),
         border: Border.all(
-          color: ThemeProvider.blushPink.withOpacity(0.15),
+          color: ThemeProvider.borderLavender.withOpacity(0.25),
           width: 1.5,
         ),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white.withOpacity(0.25),
-            ThemeProvider.dreamyMint.withOpacity(0.1),
-            ThemeProvider.whisperMint.withOpacity(0.05),
+            ThemeProvider.softLavender.withOpacity(0.25),
+            ThemeProvider.pastelPink.withOpacity(0.13),
+            ThemeProvider.pastelBlue.withOpacity(0.10),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: ThemeProvider.mysticJade.withOpacity(0.08),
+            color: ThemeProvider.lavenderShadow.withOpacity(0.10),
             blurRadius: 30,
             spreadRadius: 0,
             offset: Offset(0, 12),
           ),
           BoxShadow(
-            color: Colors.white.withOpacity(0.6),
+            color: Colors.white.withOpacity(0.4),
             blurRadius: 30,
             spreadRadius: 0,
             offset: Offset(0, -8),
           ),
           BoxShadow(
-            color: ThemeProvider.blushPink.withOpacity(0.1),
+            color: ThemeProvider.pastelPink.withOpacity(0.08),
             blurRadius: 60,
             spreadRadius: 0,
             offset: Offset(0, 20),

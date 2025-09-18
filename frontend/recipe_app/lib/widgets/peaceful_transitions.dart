@@ -244,8 +244,8 @@ class PeacefulRouteTransitions {
                         center: Alignment.center,
                         radius: glowAnimation.value * 2,
                         colors: [
-                          ThemeProvider.enchantedEmerald.withOpacity(0.1 * glowAnimation.value),
-                          ThemeProvider.mysticJade.withOpacity(0.05 * glowAnimation.value),
+                          ThemeProvider.deepLavender.withOpacity(0.1 * glowAnimation.value),
+                          ThemeProvider.pastelMint.withOpacity(0.05 * glowAnimation.value),
                           Colors.transparent,
                         ],
                       ),
@@ -357,7 +357,7 @@ class MagicalAnimatedSwitcher extends StatelessWidget {
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
                           colors: [
-                            ThemeProvider.enchantedEmerald.withOpacity(0.8),
+                            ThemeProvider.deepLavender.withOpacity(0.8),
                             Colors.transparent,
                           ],
                         ),

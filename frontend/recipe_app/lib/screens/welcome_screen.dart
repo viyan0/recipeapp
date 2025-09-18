@@ -68,22 +68,22 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         decoration: BoxDecoration(
                           gradient: RadialGradient(
                             colors: [
-                              ThemeProvider.goldPrimary,
-                              ThemeProvider.goldLight,
-                              ThemeProvider.goldDeep,
+                              ThemeProvider.dreamyLavender,
+                              ThemeProvider.gentleLavender,
+                              ThemeProvider.pastelPink,
                             ],
                             stops: [0.0, 0.7, 1.0],
                           ),
                           borderRadius: BorderRadius.circular(60),
                           boxShadow: [
                             BoxShadow(
-                              color: ThemeProvider.goldPrimary.withOpacity(0.6),
+                              color: ThemeProvider.lavenderShadow.withOpacity(0.4),
                               blurRadius: 30,
                               spreadRadius: 1,
                               offset: Offset(0, 15),
                             ),
                             BoxShadow(
-                              color: ThemeProvider.goldLight.withOpacity(0.35),
+                              color: ThemeProvider.pastelPink.withOpacity(0.18),
                               blurRadius: 60,
                               spreadRadius: 2,
                               offset: Offset(0, 25),
@@ -93,7 +93,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         child: Icon(
                           Icons.restaurant_menu_rounded,
                           size: 60,
-                          color: ThemeProvider.whisperWhite,
+                          color: ThemeProvider.deepLavender,
                         ),
                       ),
                     );
@@ -104,7 +104,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 // Beautiful welcome message
                 FrostedGlassCard(
                   padding: EdgeInsets.all(24),
-                  backgroundColor: ThemeProvider.darkGrey,
+                  backgroundColor: ThemeProvider.cardBackground,
                   child: Column(
                     children: [
                       Text(
@@ -112,7 +112,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                          color: ThemeProvider.deepLavender,
                           letterSpacing: 1.2,
                           height: 1.2,
                         ),
@@ -124,7 +124,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         'Discover amazing recipes based on what you have in your kitchen',
                         style: TextStyle(
                           fontSize: 18,
-                          color: Colors.white,
+                          color: ThemeProvider.gentleLavender,
                           letterSpacing: 0.5,
                           height: 1.4,
                         ),
@@ -146,7 +146,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       },
                       width: double.infinity,
                       height: 64,
-                    backgroundColor: ThemeProvider.darkGrey,
+                      backgroundColor: ThemeProvider.dreamyLavender,
                     ),
                     SizedBox(height: 20),
                     
@@ -158,7 +158,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       },
                       width: double.infinity,
                       height: 64,
-                    backgroundColor: ThemeProvider.darkGrey,
+                      backgroundColor: ThemeProvider.pastelPink,
                       isOutlined: false,
                     ),
                   ],
@@ -170,7 +170,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   '✨ Let\'s create magic in your kitchen ✨',
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.white,
+                    color: ThemeProvider.deepLavender,
                     letterSpacing: 0.8,
                     fontStyle: FontStyle.italic,
                   ),

@@ -40,3 +40,4 @@ async function addMissingColumn() {
 addMissingColumn().catch(console.error);
 
 
+

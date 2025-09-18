@@ -37,3 +37,4 @@ ALTER INDEX idx_favourites_new_external_recipe_id RENAME TO idx_favourites_exter
 COMMIT;
 
 
+

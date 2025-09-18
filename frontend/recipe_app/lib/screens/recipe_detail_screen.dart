@@ -116,7 +116,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           recipe['title'] ?? recipe['strMeal'] ?? 'Recipe Details',
           style: TextStyle(fontSize: 18),
         ),
-        backgroundColor: ThemeProvider.enchantedEmerald,
+        backgroundColor: ThemeProvider.deepLavender,
         foregroundColor: Colors.white,
         actions: [
           IconButton(
@@ -196,7 +196,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                                   child: Icon(
                                     Icons.restaurant,
                                     size: 80,
-                                    color: ThemeProvider.enchantedEmerald,
+                                    color: ThemeProvider.deepLavender,
                                   ),
                                 );
                               },
@@ -411,7 +411,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   height: 8,
                   margin: EdgeInsets.only(top: 6, right: 12),
                   decoration: BoxDecoration(
-                    color: ThemeProvider.enchantedEmerald,
+                    color: ThemeProvider.deepLavender,
                     shape: BoxShape.circle,
                   ),
                 ),

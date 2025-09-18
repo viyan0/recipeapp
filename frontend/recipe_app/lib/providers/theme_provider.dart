@@ -8,15 +8,25 @@ class ThemeProvider extends ChangeNotifier {
   // Calm and Peaceful Lavender-to-Mint Gradient Palette
   static const Color softLavender = Color(0xFFE8D5F2);  // Light lavender
   static const Color gentleLavender = Color(0xFFD4C4E8);  // Medium lavender
-  static const Color dreamyMint = Color(0xFFD4F1D4);  // Light mint
-  static const Color whisperMint = Color(0xFFB8E6D1);  // Soft mint
-  static const Color serenityMint = Color(0xFF9FD3C7);  // Medium mint
-  static const Color peacefulSage = Color(0xFF7FB3B3);  // Sage-mint blend
-  static const Color enchantedEmerald = Color(0xFF6B9B9B);  // Deeper mint
-  static const Color mysticJade = Color(0xFF5A8A8A);  // Dark mint
-  static const Color forestWhisper = Color(0xFF4A7A7A);  // Deep mint
-  static const Color deepForest = Color(0xFF3A6A6A);  // Darkest mint
-  static const Color silverMist = Color(0xFFA8C8C8);  // Silver-mint blend
+  static const Color dreamyLavender = Color(0xFFBFA2DB);  // Dreamy lavender
+  static const Color deepLavender = Color(0xFF8F5EC8);    // Deep lavender
+  static const Color pastelPink = Color(0xFFFFE5F1);      // Soft pink
+  static const Color pastelBlue = Color(0xFFE0F2FF);      // Soft blue
+  static const Color pastelMint = Color(0xFFD4F1D4);      // Soft mint
+  static const Color pastelYellow = Color(0xFFFFF8F0);    // Soft yellow
+  static const Color white = Color(0xFFFFFFFF);
+  static const Color softGray = Color(0xFFB0B0C3);        // Soft gray for text
+  static const Color darkGray = Color(0xFF4A5568);        // Dark gray for text
+  static const Color lavenderShadow = Color(0xFFBFA2DB);  // For shadow
+  static const Color accentPink = Color(0xFFFFB3C1);      // Accent pink
+  static const Color accentBlue = Color(0xFFB8E6FF);      // Accent blue
+  static const Color accentMint = Color(0xFFB8E6D1);      // Accent mint
+  static const Color accentYellow = Color(0xFFFFE08A);    // Accent yellow
+  static const Color cardBackground = Color(0xFFF7F3FB);  // Card background
+  static const Color inputBackground = Color(0xFFF3EFFF); // Input background
+  static const Color borderLavender = Color(0xFFD4C4E8);  // Border
+  static const Color errorRed = Color(0xFFFF6F91);        // Error
+  static const Color successGreen = Color(0xFF7FD3A7);    // Success
   
   // Complementary Gentle Colors
   static const Color softPeach = Color(0xFFFFE5D9);
@@ -32,11 +42,10 @@ class ThemeProvider extends ChangeNotifier {
   
   // Charcoal Gray Text Colors for Calm Design
   static const Color deepSlate = Color(0xFF2D3748);  // Charcoal gray
-  static const Color softGray = Color(0xFF4A5568);  // Medium charcoal
-  static const Color lightGray = Color(0xFF718096);  // Light charcoal
   static const Color whisperWhite = Color(0xFFF7FAFC);  // Soft white
   static const Color emeraldText = Color(0xFF2D3748);  // Charcoal gray for main text
   static const Color sageDark = Color(0xFF4A5568);  // Medium charcoal for secondary text
+  static const Color lightGray = Color(0xFF718096);  // Light charcoal for subtle text
   
   // Blush Pink Button Colors for Calm Design
   static const Color blushPink = Color(0xFFFFB3C1);  // Main blush pink
@@ -58,8 +67,8 @@ class ThemeProvider extends ChangeNotifier {
   // Map previous green/teal names to the new calm palette
   static const Color softTeal = deepBlush;          // previously teal accents → use deeper blush
   static const Color gentleCoral = blushPink;       // coral accents → blush pink
-  static const Color whisperGreen = whisperMint;    // old name mapped to new mint
-  static const Color serenityGreen = serenityMint;  // old name mapped to new mint
+  static const Color whisperGreen = pastelMint;    // old name mapped to new mint
+  static const Color serenityGreen = pastelMint;  // old name mapped to new mint
 
   bool get isDarkMode => _isDarkMode;
 
@@ -89,38 +98,38 @@ class ThemeProvider extends ChangeNotifier {
 
   ThemeData get lightTheme {
     return ThemeData(
-      primarySwatch: Colors.amber,
-      primaryColor: goldPrimary,
-      scaffoldBackgroundColor: Colors.black,
+      primarySwatch: Colors.purple,
+      primaryColor: gentleLavender,
+      scaffoldBackgroundColor: softLavender,
       appBarTheme: AppBarTheme(
-        backgroundColor: Colors.transparent,
-        foregroundColor: goldLight,
+        backgroundColor: gentleLavender,
+        foregroundColor: darkGray,
         elevation: 0,
-        shadowColor: Colors.transparent,
+        shadowColor: lavenderShadow.withOpacity(0.15),
         surfaceTintColor: Colors.transparent,
         titleTextStyle: TextStyle(
-          color: emeraldText,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.5,
+          color: deepLavender,
+          fontSize: 22,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.8,
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: darkGrey,
-          foregroundColor: Colors.white,
+          backgroundColor: dreamyLavender,
+          foregroundColor: white,
           padding: EdgeInsets.symmetric(horizontal: 32, vertical: 18),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
           ),
-          elevation: 12,
-          shadowColor: goldPrimary.withOpacity(0.5),
+          elevation: 8,
+          shadowColor: lavenderShadow.withOpacity(0.25),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: goldPrimary,
-          side: BorderSide(color: goldPrimary, width: 2),
+          foregroundColor: deepLavender,
+          side: BorderSide(color: deepLavender, width: 2),
           padding: EdgeInsets.symmetric(horizontal: 32, vertical: 18),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
@@ -128,39 +137,69 @@ class ThemeProvider extends ChangeNotifier {
         ),
       ),
       cardTheme: CardThemeData(
-        color: darkGrey,
-        elevation: 16,
-        shadowColor: goldPrimary.withOpacity(0.25),
+        color: cardBackground,
+        elevation: 8,
+        shadowColor: lavenderShadow.withOpacity(0.12),
         shape: RoundedRectangleBorder(
-          side: BorderSide(color: goldPrimary, width: 1.2),
+          side: BorderSide(color: borderLavender, width: 1.2),
           borderRadius: BorderRadius.circular(16),
         ),
       ),
       textTheme: TextTheme(
-        bodyLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, letterSpacing: 0.3),
-        bodyMedium: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, letterSpacing: 0.2),
-        headlineLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 0.5),
-        headlineMedium: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, letterSpacing: 0.4),
-        titleLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, letterSpacing: 0.3),
-        titleMedium: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, letterSpacing: 0.2),
+        bodyLarge: TextStyle(color: darkGray, fontWeight: FontWeight.w500, letterSpacing: 0.3),
+        bodyMedium: TextStyle(color: darkGray, fontWeight: FontWeight.w400, letterSpacing: 0.2),
+        headlineLarge: TextStyle(color: deepLavender, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+        headlineMedium: TextStyle(color: deepLavender, fontWeight: FontWeight.w600, letterSpacing: 0.4),
+        titleLarge: TextStyle(color: deepLavender, fontWeight: FontWeight.w600, letterSpacing: 0.3),
+        titleMedium: TextStyle(color: deepLavender, fontWeight: FontWeight.w500, letterSpacing: 0.2),
       ),
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: goldPrimary, width: 1.5),
+          borderSide: BorderSide(color: borderLavender, width: 1.5),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: goldLight, width: 2),
+          borderSide: BorderSide(color: deepLavender, width: 2),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: goldPrimary, width: 1.5),
+          borderSide: BorderSide(color: borderLavender, width: 1.5),
         ),
-        fillColor: darkGrey,
+        fillColor: inputBackground,
         filled: true,
         contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       ),
+      chipTheme: ChipThemeData(
+        backgroundColor: pastelPink.withOpacity(0.18),
+        selectedColor: dreamyLavender.withOpacity(0.25),
+        labelStyle: TextStyle(color: deepLavender),
+        secondaryLabelStyle: TextStyle(color: accentPink),
+        brightness: Brightness.light,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: borderLavender, width: 1),
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: deepLavender,
+        foregroundColor: white,
+        elevation: 12,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: gentleLavender,
+        selectedItemColor: deepLavender,
+        unselectedItemColor: softGray,
+        elevation: 8,
+        type: BottomNavigationBarType.fixed,
+      ),
+      dividerColor: borderLavender.withOpacity(0.3),
+      iconTheme: IconThemeData(color: deepLavender),
+      primaryIconTheme: IconThemeData(color: deepLavender),
     );
   }
 

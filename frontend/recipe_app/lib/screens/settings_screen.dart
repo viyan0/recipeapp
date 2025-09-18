@@ -89,7 +89,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: Text('Logout', style: TextStyle(color: ThemeProvider.enchantedEmerald)),
+              child: Text('Logout', style: TextStyle(color: ThemeProvider.deepLavender)),
             ),
           ],
         );
@@ -265,18 +265,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Settings'),
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
+        backgroundColor: ThemeProvider.gentleLavender,
+        foregroundColor: ThemeProvider.deepLavender,
         elevation: 0,
         flexibleSpace: Container(
           decoration: BoxDecoration(
-            color: ThemeProvider.darkGrey,
+            color: ThemeProvider.gentleLavender,
             border: Border(
-              bottom: BorderSide(color: ThemeProvider.goldPrimary, width: 1.5),
+              bottom: BorderSide(color: ThemeProvider.deepLavender, width: 1.5),
             ),
             boxShadow: [
               BoxShadow(
-                color: ThemeProvider.goldPrimary.withOpacity(0.25),
+                color: ThemeProvider.lavenderShadow.withOpacity(0.18),
                 blurRadius: 12,
                 offset: Offset(0, 4),
               ),
@@ -289,10 +289,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           // Profile Section
           Card(
-            color: ThemeProvider.darkGrey,
+            color: ThemeProvider.cardBackground,
             elevation: 2,
             shape: RoundedRectangleBorder(
-              side: BorderSide(color: ThemeProvider.goldPrimary, width: 1.2),
+              side: BorderSide(color: ThemeProvider.borderLavender, width: 1.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Padding(
@@ -302,14 +302,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.person, color: ThemeProvider.goldLight, size: 24),
+                      Icon(Icons.person, color: ThemeProvider.deepLavender, size: 24),
                       SizedBox(width: 12),
                       Text(
                         'Profile',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: ThemeProvider.deepLavender,
                         ),
                       ),
                     ],
@@ -332,9 +332,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       title: Text(
                         _currentUser!.username,
-                        style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+                        style: TextStyle(fontWeight: FontWeight.w600, color: ThemeProvider.deepLavender),
                       ),
-                      subtitle: Text(_currentUser!.email, style: TextStyle(color: Colors.white70)),
+                      subtitle: Text(_currentUser!.email, style: TextStyle(color: ThemeProvider.gentleLavender)),
                       trailing: Icon(Icons.arrow_forward_ios, size: 16),
                       onTap: _showProfileDialog,
                     ),
@@ -352,10 +352,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           // Dietary Preferences Section
           Card(
-            color: ThemeProvider.darkGrey,
+            color: ThemeProvider.cardBackground,
             elevation: 2,
             shape: RoundedRectangleBorder(
-              side: BorderSide(color: ThemeProvider.goldPrimary, width: 1.2),
+              side: BorderSide(color: ThemeProvider.borderLavender, width: 1.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Padding(
@@ -365,14 +365,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.restaurant, color: ThemeProvider.goldLight, size: 24),
+                      Icon(Icons.restaurant, color: ThemeProvider.deepLavender, size: 24),
                       SizedBox(width: 12),
                       Text(
                         'Dietary Preferences',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: ThemeProvider.deepLavender,
                         ),
                       ),
                     ],
@@ -385,10 +385,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onChanged: _isLoading ? null : (bool value) {
                       _updateDietaryPreference(value);
                     },
-                    activeColor: ThemeProvider.goldLight,
+                    activeColor: ThemeProvider.deepLavender,
                     secondary: Icon(
                       _isVegetarian ? Icons.eco : Icons.restaurant,
-                      color: _isVegetarian ? ThemeProvider.goldLight : Colors.white70,
+                      color: _isVegetarian ? ThemeProvider.deepLavender : ThemeProvider.gentleLavender,
                     ),
                   ),
                   if (_isLoading)
@@ -424,10 +424,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           // Theme Section
           Card(
-            color: ThemeProvider.darkGrey,
+            color: ThemeProvider.cardBackground,
             elevation: 2,
             shape: RoundedRectangleBorder(
-              side: BorderSide(color: ThemeProvider.goldPrimary, width: 1.2),
+              side: BorderSide(color: ThemeProvider.borderLavender, width: 1.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Padding(
@@ -437,14 +437,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.palette, color: ThemeProvider.goldLight, size: 24),
+                      Icon(Icons.palette, color: ThemeProvider.deepLavender, size: 24),
                       SizedBox(width: 12),
                       Text(
                         'Appearance',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: ThemeProvider.deepLavender,
                         ),
                       ),
                     ],
@@ -468,10 +468,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                       );
                     },
-                    activeColor: ThemeProvider.goldLight,
+                    activeColor: ThemeProvider.deepLavender,
                     secondary: Icon(
                       themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
-                      color: themeProvider.isDarkMode ? ThemeProvider.goldLight : Colors.white70,
+                      color: themeProvider.isDarkMode ? ThemeProvider.deepLavender : ThemeProvider.gentleLavender,
                     ),
                   ),
                 ],
@@ -483,10 +483,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           // Account Actions Section
           Card(
-            color: ThemeProvider.darkGrey,
+            color: ThemeProvider.cardBackground,
             elevation: 2,
             shape: RoundedRectangleBorder(
-              side: BorderSide(color: ThemeProvider.goldPrimary, width: 1.2),
+              side: BorderSide(color: ThemeProvider.borderLavender, width: 1.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Padding(
@@ -496,14 +496,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.account_circle, color: ThemeProvider.goldLight, size: 24),
+                      Icon(Icons.account_circle, color: ThemeProvider.deepLavender, size: 24),
                       SizedBox(width: 12),
                       Text(
                         'Account',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: ThemeProvider.deepLavender,
                         ),
                       ),
                     ],
@@ -513,15 +513,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   // Logout option
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    leading: Icon(Icons.logout, color: ThemeProvider.goldLight),
+                    leading: Icon(Icons.logout, color: ThemeProvider.deepLavender),
                     title: Text(
                       'Logout',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: ThemeProvider.deepLavender,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    subtitle: Text('Sign out of your account (data remains in database)', style: TextStyle(color: Colors.white70)),
+                    subtitle: Text('Sign out of your account (data remains in database)', style: TextStyle(color: ThemeProvider.gentleLavender)),
                     trailing: Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: _logout,
                   ),
@@ -540,11 +540,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
                           ),
                         )
-                      : Icon(Icons.delete_forever, color: Colors.red[600]),
+                      : Icon(Icons.delete_forever, color: ThemeProvider.errorRed),
                     title: Text(
                       'Delete Account',
                       style: TextStyle(
-                        color: Colors.red[600],
+                        color: ThemeProvider.errorRed,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
