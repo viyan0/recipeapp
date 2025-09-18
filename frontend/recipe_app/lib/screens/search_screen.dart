@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import '../services/recipe_service.dart';
 import '../services/auth_service.dart';
 import 'recipe_results_screen.dart';
@@ -114,7 +115,7 @@ class _SearchScreenState extends State<SearchScreen> {
     
     if (allIngredients.isEmpty) {
       setState(() {
-        _errorMessage = 'Please add at least one ingredient or select preferences';
+        _errorMessage = 'Please add at least one ingredient';
       });
       return;
     }
@@ -471,6 +472,17 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
 
+            // Lightly blurred full-width image placed below the button
+            ImageFiltered(
+              imageFilter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
+              child: Image.asset(
+                'assets/images/search_bg.jpg',
+                fit: BoxFit.fitWidth,
+                alignment: Alignment.topCenter,
+                width: double.infinity,
+              ),
+            ),
+
             // Selected ingredients
             if (_requiredIngredients.isNotEmpty) ...[
               Container(
@@ -512,83 +524,7 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ],
 
-            // Ingredient preferences - 3 horizontal dropdowns
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.favorite_outline, color: ThemeProvider.deepLavender, size: 18),
-                      SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          'Ingredient Preferences (optional)',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: ThemeProvider.deepLavender,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildMultiSelectDropdown(
-                          label: 'Vegetables',
-                          selectedValues: _selectedVegetables,
-                          options: _ingredientCategories['Vegetables']!,
-                          onChanged: (vals) {
-                            setState(() {
-                              _selectedVegetables = vals;
-                              _selectedPreferences.removeWhere((e) => _ingredientCategories['Vegetables']!.contains(e));
-                              _selectedPreferences.addAll(vals);
-                              _requiredIngredients.removeWhere((e) => vals.contains(e));
-                            });
-                          },
-                        ),
-                      ),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: _buildMultiSelectDropdown(
-                          label: 'Proteins',
-                          selectedValues: _selectedProteins,
-                          options: _ingredientCategories['Proteins']!,
-                          onChanged: (vals) {
-                            setState(() {
-                              _selectedProteins = vals;
-                              _selectedPreferences.removeWhere((e) => _ingredientCategories['Proteins']!.contains(e));
-                              _selectedPreferences.addAll(vals);
-                              _requiredIngredients.removeWhere((e) => vals.contains(e));
-                            });
-                          },
-                        ),
-                      ),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: _buildMultiSelectDropdown(
-                          label: 'Staples',
-                          selectedValues: _selectedStaples,
-                          options: _ingredientCategories['Staples']!,
-                          onChanged: (vals) {
-                            setState(() {
-                              _selectedStaples = vals;
-                              _selectedPreferences.removeWhere((e) => _ingredientCategories['Staples']!.contains(e));
-                              _selectedPreferences.addAll(vals);
-                              _requiredIngredients.removeWhere((e) => vals.contains(e));
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            // Removed ingredient preference dropdowns (Vegetables, Proteins, Staples)
 
             // Error message
             if (_errorMessage.isNotEmpty)
@@ -631,9 +567,9 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                     ],
                   ),
-                ),
-              )
-            else
+              ),
+            )
+          else
               Container(
                 height: 200,
                 child: Center(
